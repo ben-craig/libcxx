@@ -298,7 +298,9 @@ long double    truncl(long double x);
 #pragma GCC system_header
 #endif
 
-#include_next <math.h>
+#include <../../km/crt/math.h>
+#include <support/win32/float_win32.h>
+//#include_next <math.h>
 
 #ifdef __cplusplus
 
@@ -634,7 +636,7 @@ isunordered(_A1 __lcpp_x, _A2 __lcpp_y) _NOEXCEPT
 
 // abs
 
-#if !(defined(_AIX) || defined(__sun__))
+#if !(defined(_AIX) || defined(__sun__) || defined(_MSC_VER))
 inline _LIBCPP_INLINE_VISIBILITY
 float
 abs(float __lcpp_x) _NOEXCEPT {return fabsf(__lcpp_x);}

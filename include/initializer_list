@@ -61,11 +61,12 @@ class _LIBCPP_TEMPLATE_VIS initializer_list
     const _Ep* __begin_;
     size_t    __size_;
 
-    _LIBCPP_ALWAYS_INLINE
+public:
+	_LIBCPP_ALWAYS_INLINE
     _LIBCPP_CONSTEXPR_AFTER_CXX11
-    initializer_list(const _Ep* __b, size_t __s) _NOEXCEPT
+    initializer_list(const _Ep* __b, const _Ep* __e) _NOEXCEPT
         : __begin_(__b),
-          __size_(__s)
+          __size_(__e - __b)
         {}
 public:
     typedef _Ep        value_type;

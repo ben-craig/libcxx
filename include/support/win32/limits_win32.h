@@ -62,16 +62,17 @@
 
 // __builtin replacements/workarounds
 #include <math.h> // HUGE_VAL
-#include <ymath.h> // internal MSVC header providing the needed functionality
+//#include <ymath.h> // internal MSVC header providing the needed functionality
+
 #define __builtin_huge_val()     HUGE_VAL
-#define __builtin_huge_valf()    _FInf._Float
-#define __builtin_huge_vall()    _LInf._Long_double
-#define __builtin_nan(__dummy)   _Nan._Double
-#define __builtin_nanf(__dummy)  _FNan._Float
-#define __builtin_nanl(__dummmy) _LNan._Long_double
-#define __builtin_nans(__dummy)  _Snan._Double
-#define __builtin_nansf(__dummy) _FSnan._Float
-#define __builtin_nansl(__dummy) _LSnan._Long_double
+#define __builtin_huge_valf()    ((float)(1e308 * 10))
+#define __builtin_huge_vall()    ((long double)HUGE_VAL)
+#define __builtin_nan(__dummy)   ((1e308 * 10)*0.)
+#define __builtin_nanf(__dummy)  ((float)((1e308 * 10)*0.))
+#define __builtin_nanl(__dummmy) ((long double)((1e308 * 10)*0.))
+#define __builtin_nans(__dummy)  ((1e308 * 10)*0.)
+#define __builtin_nansf(__dummy) ((float)((1e308 * 10)*0.))
+#define __builtin_nansl(__dummy) ((long double)((1e308 * 10)*0.))
 #endif // ! defined(__clang__)
 
 #endif // _LIBCPP_MSVCRT

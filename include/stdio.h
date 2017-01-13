@@ -105,7 +105,8 @@ void perror(const char* s);
 #pragma GCC system_header
 #endif
 
-#include_next <stdio.h>
+#include <../../km/crt/stdio.h>
+//#include_next <stdio.h>
 
 #ifdef __cplusplus
 

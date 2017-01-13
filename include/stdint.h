@@ -116,6 +116,7 @@ Macros:
 #   define __STDC_CONSTANT_MACROS
 #endif
 
-#include_next <stdint.h>
+#include <support/win32/stdint_win32.h>
+//#include_next <stdint.h>
 
 #endif  // _LIBCPP_STDINT_H

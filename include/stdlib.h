@@ -91,14 +91,15 @@ void *aligned_alloc(size_t alignment, size_t size);                       // C11
 #pragma GCC system_header
 #endif
 
-#include_next <stdlib.h>
+//#include_next <stdlib.h>
+#include <../../km/crt/stdlib.h>
 
 #ifdef __cplusplus
 
 extern "C++" {
 
 #ifdef _LIBCPP_MSVCRT
-#include "support/win32/locale_win32.h"
+//#include "support/win32/locale_win32.h"
 #endif // _LIBCPP_MSVCRT
 
 #undef abs

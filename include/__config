@@ -999,4 +999,6 @@ _LIBCPP_FUNC_VIS extern "C" void __sanitizer_annotate_contiguous_container(
 
 #endif // __cplusplus
 
+#define _LIBCPP_HAS_NO_LONG_LONG
+
 #endif // _LIBCPP_CONFIG

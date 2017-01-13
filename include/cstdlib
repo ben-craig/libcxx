@@ -110,8 +110,8 @@ using ::atol;
 using ::atoll;
 #endif // _LIBCPP_HAS_NO_LONG_LONG
 using ::strtod;
-using ::strtof;
-using ::strtold;
+//using ::strtof;
+//using ::strtold;
 using ::strtol;
 #ifndef _LIBCPP_HAS_NO_LONG_LONG
 using ::strtoll;
@@ -129,7 +129,7 @@ using ::realloc;
 using ::abort;
 using ::atexit;
 using ::exit;
-using ::_Exit;
+//using ::_Exit;
 using ::getenv;
 using ::system;
 using ::bsearch;
