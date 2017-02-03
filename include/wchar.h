@@ -116,7 +116,8 @@ size_t wcsrtombs(char* restrict dst, const wchar_t** restrict src, size_t len,
 #define __CORRECT_ISO_CPP_WCHAR_H_PROTO
 #endif
 
-#include_next <wchar.h>
+//#include_next <wchar.h>
+#include <../../km/crt/wchar.h>
 
 // Determine whether we have const-correct overloads for wcschr and friends.
 #if defined(_WCHAR_H_CPLUSPLUS_98_CONFORMANCE_)

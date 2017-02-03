@@ -22,7 +22,7 @@
 #include <intrin.h>
 #endif
 #if defined(_LIBCPP_MSVCRT)
-#include <crtversion.h>
+//#include <crtversion.h>
 #endif
 #define swprintf _snwprintf
 #define vswprintf _vsnwprintf
@@ -110,7 +110,7 @@ _LIBCPP_ALWAYS_INLINE int __builtin_ctzll(unsigned long long mask)
   unsigned long where;
 // Search from LSB to MSB for first set bit.
 // Returns zero if no set bit is found.
-#if defined(_LIBCPP_HAS_BITSCAN64)
+#if defined(_LIBCPP_HAS_BITSCAN64) && \
     (defined(_M_AMD64) || defined(__x86_64__))
   if (_BitScanForward64(&where, mask))
     return static_cast<int>(where);

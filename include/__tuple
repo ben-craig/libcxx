@@ -140,7 +140,7 @@ template<> struct __parity<7> { template<size_t _Np> struct __pmake : __repeat<t
 
 #endif  // !__has_builtin(__make_integer_seq) || defined(_LIBCPP_TESTING_FALLBACK_MAKE_INTEGER_SEQUENCE)
 
-#if __has_builtin(__make_integer_seq)
+#if 1 //__has_builtin(__make_integer_seq)
 template <size_t _Ep, size_t _Sp>
 using __make_indices_imp =
     typename __make_integer_seq<__integer_sequence, size_t, _Ep - _Sp>::template
@@ -254,6 +254,7 @@ template <class ..._Tp> struct __tuple_types {};
 
 #if !__has_builtin(__type_pack_element)
 
+#if 0 //following is the upstream implementation
 namespace __indexer_detail {
 
 template <size_t _Idx, class _Tp>
@@ -279,6 +280,23 @@ using __type_pack_element = typename decltype(
             typename __make_tuple_indices<sizeof...(_Types)>::type
         >{})
   )::type;
+#else //here's my slow impl
+
+namespace __detail {
+	template< std::size_t _Idx, class _Head, class... _Tail >
+	struct __type_pack_impl : __type_pack_impl<_Idx - 1, _Tail...> {};
+
+	// base case
+	template< class _Head, class... _Tail >
+	struct __type_pack_impl <0, _Head, _Tail...> {
+		typedef _Head type;
+	};
+}
+
+template <size_t _Idx, class ..._Types>
+using __type_pack_element = typename __detail::__type_pack_impl<_Idx, _Types...>::type;
+#endif
+
 #endif
 
 template <size_t _Ip, class ..._Types>
@@ -395,19 +413,46 @@ template <bool ..._Pred>
 using __all = is_same<__all_dummy<_Pred...>, __all_dummy<((void)_Pred, true)...>>;
 
 struct __tuple_sfinae_base {
+#if 0
   template <template <class, class...> class _Trait,
             class ..._LArgs, class ..._RArgs>
   static auto __do_test(__tuple_types<_LArgs...>, __tuple_types<_RArgs...>)
     -> __all<typename enable_if<_Trait<_LArgs, _RArgs>::value, bool>::type{true}...>;
   template <template <class...> class>
   static auto __do_test(...) -> false_type;
+#endif
 
+  template <class _FromArgs, class _ToArgs> struct __constructible;
+  template <class ..._LArgs, class ..._RArgs>
+  struct __constructible<__tuple_types<_LArgs...>, __tuple_types<_RArgs...> > : __all<
+	  enable_if<
+		is_constructible<_LArgs, _RArgs>::value,
+		true_type
+	  >::value... > {};
+
+  template <class _FromArgs, class _ToArgs> struct __convertible;
+  template <class ..._LArgs, class ..._RArgs>
+  struct __convertible<__tuple_types<_LArgs...>, __tuple_types<_RArgs...> > : __all<
+	  enable_if<
+		is_convertible<_LArgs, _RArgs>::value,
+		true_type
+	  >::value... > {};
+
+  template <class _FromArgs, class _ToArgs> struct __assignable;
+  template <class ..._LArgs, class ..._RArgs>
+  struct __assignable<__tuple_types<_LArgs...>, __tuple_types<_RArgs...> > : __all<
+	  enable_if<
+		is_assignable<_LArgs, _RArgs>::value,
+		true_type
+	  >::value... > {};
+#if 0
   template <class _FromArgs, class _ToArgs>
   using __constructible = decltype(__do_test<is_constructible>(_ToArgs{}, _FromArgs{}));
   template <class _FromArgs, class _ToArgs>
   using __convertible = decltype(__do_test<is_convertible>(_FromArgs{}, _ToArgs{}));
   template <class _FromArgs, class _ToArgs>
   using __assignable = decltype(__do_test<is_assignable>(_ToArgs{}, _FromArgs{}));
+#endif
 };
 
 // __tuple_convertible
@@ -487,13 +532,13 @@ using __tuple_like_with_size = __tuple_like_with_size_imp<
 
 struct _LIBCPP_TYPE_VIS __check_tuple_constructor_fail {
     template <class ...>
-    static constexpr bool __enable_default() { return false; }
+    static constexpr bool __enable_default = false;
     template <class ...>
-    static constexpr bool __enable_explicit() { return false; }
+    static constexpr bool __enable_explicit = false;
     template <class ...>
-    static constexpr bool __enable_implicit() { return false; }
+    static constexpr bool __enable_implicit = false;
     template <class ...>
-    static constexpr bool __enable_assign() { return false; }
+	static constexpr bool __enable_assign = false;
 };
 #endif
 

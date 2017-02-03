@@ -43,7 +43,8 @@ Types:
 #pragma GCC system_header
 #endif
 
-#include_next <stddef.h>
+//#include_next <stddef.h>
+#include <../../km/crt/stddef.h>
 
 #ifdef __cplusplus
 

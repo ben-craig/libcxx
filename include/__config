@@ -79,7 +79,7 @@
 
 #define _LIBCPP_NAMESPACE _LIBCPP_CONCAT(__,_LIBCPP_ABI_VERSION)
 
-#if __cplusplus < 201103L
+#if 0 //__cplusplus < 201103L
 #define _LIBCPP_CXX03_LANG
 #endif
 
@@ -258,7 +258,7 @@
 #  define _ALIGNAS(x) __attribute__((__aligned__(x)))
 #endif
 
-#if __cplusplus < 201103L
+#if 0 //__cplusplus < 201103L
 typedef __char16_t char16_t;
 typedef __char32_t char32_t;
 #endif
@@ -500,7 +500,7 @@ using namespace _LIBCPP_NAMESPACE __attribute__((__strong__));
 #define __alignof__ __alignof
 #define _LIBCPP_NORETURN __declspec(noreturn)
 #define _ALIGNAS(x) __declspec(align(x))
-#define _LIBCPP_HAS_NO_VARIADICS
+//#define _LIBCPP_HAS_NO_VARIADICS
 
 #define _LIBCPP_BEGIN_NAMESPACE_STD namespace std {
 #define _LIBCPP_END_NAMESPACE_STD  }
@@ -687,6 +687,7 @@ namespace std {
 #  endif
 #endif
 
+#undef _LIBCPP_HAS_NO_NOEXCEPT
 #ifndef _LIBCPP_HAS_NO_NOEXCEPT
 #  define _NOEXCEPT noexcept
 #  define _NOEXCEPT_(x) noexcept(x)
@@ -835,9 +836,9 @@ template <unsigned> struct __static_assert_check {};
 #endif
 
 #ifndef _LIBCPP_STD_VER
-#  if  __cplusplus <= 201103L
+#  if  1 //__cplusplus <= 201103L
 #    define _LIBCPP_STD_VER 11
-#  elif __cplusplus <= 201402L
+#  elif 0 //__cplusplus <= 201402L
 #    define _LIBCPP_STD_VER 14
 #  else
 #    define _LIBCPP_STD_VER 16  // current year, or date of c++17 ratification
@@ -1000,5 +1001,6 @@ _LIBCPP_FUNC_VIS extern "C" void __sanitizer_annotate_contiguous_container(
 #endif // __cplusplus
 
 #define _LIBCPP_HAS_NO_LONG_LONG
+#define _LIBCPP_NO_EXCEPTIONS
 
 #endif // _LIBCPP_CONFIG
