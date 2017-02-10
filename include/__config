@@ -966,6 +966,8 @@ _LIBCPP_FUNC_VIS extern "C" void __sanitizer_annotate_contiguous_container(
 #define _LIBCPP_HAS_C_ATOMIC_IMP
 #elif _GNUC_VER > 407
 #define _LIBCPP_HAS_GCC_ATOMIC_IMP
+#elif defined(_MSC_VER)
+#define _LIBCPP_HAS_MSVC_ATOMIC_IMP
 #endif
 
 #if (!defined(_LIBCPP_HAS_C_ATOMIC_IMP) && !defined(_LIBCPP_HAS_GCC_ATOMIC_IMP)) \

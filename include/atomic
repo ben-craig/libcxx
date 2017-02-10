@@ -552,7 +552,7 @@ void atomic_signal_fence(memory_order m) noexcept;
 #ifdef _LIBCPP_HAS_NO_THREADS
 #error <atomic> is not supported on this single threaded system
 #endif
-#if !defined(_LIBCPP_HAS_C_ATOMIC_IMP) && !defined(_LIBCPP_HAS_GCC_ATOMIC_IMP)
+#if !defined(_LIBCPP_HAS_C_ATOMIC_IMP) && !defined(_LIBCPP_HAS_GCC_ATOMIC_IMP) && !defined(_LIBCPP_HAS_MSVC_ATOMIC_IMP)
 #error <atomic> is not implemented
 #endif
 
@@ -835,6 +835,12 @@ static inline _Tp __c11_atomic_fetch_xor(_Atomic(_Tp)* __a, _Tp __pattern,
   return __atomic_fetch_xor(&__a->__a_value, __pattern,
                             __gcc_atomic::__to_gcc_order(__order));
 }
+#endif // _LIBCPP_HAS_GCC_ATOMIC_IMP
+
+#if defined(_LIBCPP_HAS_MSVC_ATOMIC_IMP)
+_LIBCPP_END_NAMESPACE_STD
+#include <support/win32/atomic_win32.h>
+_LIBCPP_BEGIN_NAMESPACE_STD
 #endif // _LIBCPP_HAS_GCC_ATOMIC_IMP
 
 template <class _Tp>
@@ -1702,13 +1708,14 @@ typedef struct atomic_flag
 #ifndef _LIBCPP_CXX03_LANG
     atomic_flag(const atomic_flag&) = delete;
     atomic_flag& operator=(const atomic_flag&) = delete;
-    atomic_flag& operator=(const atomic_flag&) volatile = delete;
+	atomic_flag& operator=(const atomic_flag&) volatile = delete;
 #else
 private:
     atomic_flag(const atomic_flag&);
     atomic_flag& operator=(const atomic_flag&);
     atomic_flag& operator=(const atomic_flag&) volatile;
 #endif
+#pragma warning(suppress: 4522) // multiple op=
 } atomic_flag;
 
 inline _LIBCPP_INLINE_VISIBILITY
