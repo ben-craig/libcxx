@@ -33,6 +33,7 @@
 #define _LIBCPP_ABI_VERSION 1
 #endif
 
+#define _LIBCPP_ABI_UNSTABLE
 #if defined(_LIBCPP_ABI_UNSTABLE) || _LIBCPP_ABI_VERSION >= 2
 // Change short string representation so that string data starts at offset 0,
 // improving its alignment in some cases.
@@ -57,6 +58,9 @@
 // `pointer_safety` and `get_pointer_safety()` will no longer be available
 // in C++03.
 #define _LIBCPP_ABI_POINTER_SAFETY_ENUM_TYPE
+// Use a function reference and template magic instead of a class with a no-op
+// op=.  This allows us to avoid global ctors and dtors.
+#define _LIBCPP_ABI_USE_FUNCTION_FOR_TIE_IGNORE
 #elif _LIBCPP_ABI_VERSION == 1
 #if !defined(_WIN32)
 // Enable compiling a definition of error_category() into the libc++ dylib.

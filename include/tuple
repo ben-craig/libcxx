@@ -1055,25 +1055,48 @@ constexpr _T1 const&& get(tuple<_Args...> const&& __tup) noexcept
 
 #endif
 
-// tie
+#ifdef _LIBCPP_ABI_USE_FUNCTION_FOR_TIE_IGNORE
+struct __ignore_arg_helper_t;
+typedef void(&__ignore_func_t)(__ignore_arg_helper_t);
+#endif
 
+template <class _Up>
+struct __ignore_t
+{
+#ifdef _LIBCPP_ABI_USE_FUNCTION_FOR_TIE_IGNORE
+	__ignore_t() = default;
+	explicit __ignore_t(__ignore_func_t) {}
+#endif
+	template <class _Tp>
+	_LIBCPP_INLINE_VISIBILITY
+		const __ignore_t& operator=(_Tp&&) const { return *this; }
+};
+
+template <typename T>
+struct __tie_type_translator { typedef T type; };
+
+
+#ifdef _LIBCPP_ABI_USE_FUNCTION_FOR_TIE_IGNORE
+struct __ignore_arg_helper_t;
+void ignore(__ignore_arg_helper_t);
+typedef void(&__ignore_func_t)(__ignore_arg_helper_t);
+template <>
+struct __tie_type_translator<__ignore_func_t> { typedef __ignore_t<unsigned char> type; };
+#else
+namespace { const __ignore_t<unsigned char> ignore = __ignore_t<unsigned char>(); }
+#endif
+
+template <typename T>
+using __tie_type_translator_t = typename __tie_type_translator<T>::type;
+
+// tie
 template <class ..._Tp>
 inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
 tuple<_Tp&...>
 tie(_Tp&... __t) _NOEXCEPT
 {
-    return tuple<_Tp&...>(__t...);
+	return tuple<___tie_type_translator_t<Tp>&...>(__t...);
 }
-
-template <class _Up>
-struct __ignore_t
-{
-    template <class _Tp>
-        _LIBCPP_INLINE_VISIBILITY
-        const __ignore_t& operator=(_Tp&&) const {return *this;}
-};
-
-namespace { const __ignore_t<unsigned char> ignore = __ignore_t<unsigned char>(); }
 
 template <class _Tp>
 struct __make_tuple_return_impl
