@@ -993,10 +993,12 @@ cbrt(_A1 __lcpp_x) _NOEXCEPT {return cbrt((double)__lcpp_x);}
 // copysign
 
 #if !defined(_VC_CRT_MAJOR_VERSION) || (_VC_CRT_MAJOR_VERSION < 12)
+#if 0
 inline _LIBCPP_INLINE_VISIBILITY float copysign(float __lcpp_x,
                                                 float __lcpp_y) _NOEXCEPT {
   return copysignf(__lcpp_x, __lcpp_y);
 }
+#endif
 inline _LIBCPP_INLINE_VISIBILITY long double
 copysign(long double __lcpp_x, long double __lcpp_y) _NOEXCEPT {
   return copysignl(__lcpp_x, __lcpp_y);
