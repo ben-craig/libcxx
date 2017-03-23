@@ -28,10 +28,10 @@ class CXXCompiler(object):
         #self.compile_flags = list(compile_flags or [])
         self.compile_flags = [
             r'/IC:\src\libcxx\include',
-            r'/I\"C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\km\crt\"',
-            r'/I\"C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\km\"',
-            r'/I\"C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\shared\"',
-            r'/I\"C:\Program Files (x86)\Windows Kits\10\Include\wdf\kmdf\1.15\"',
+            r'/IC:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\km\crt',
+            r'/IC:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\km',
+            r'/IC:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\shared',
+            r'/IC:\Program Files (x86)\Windows Kits\10\Include\wdf\kmdf\1.15',
             #"/Zi",
             "/nologo",
             "/Od",
@@ -67,7 +67,9 @@ class CXXCompiler(object):
             "/Gz",
             #"/FI\"C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\shared\warning.h\"",
             "/errorReport:prompt",
-            "/kernel -cbstring -d2epilogunwind",
+            "/kernel",
+            "-cbstring",
+            "-d2epilogunwind",
             #"/d1import_no_registry",
             #"/d2AllowCompatibleILVersions",
             #"/d2Zi+"
@@ -107,7 +109,7 @@ class CXXCompiler(object):
                 cmd += ['/Fi' + os.path.dirname(out)]
             elif mode == self.CM_Compile:
                 cmd += ['/Fo' + os.path.dirname(out)]
-            elif mode == self.CM_Link
+            elif mode == self.CM_Link:
                 cmd += ["/OUT:\"" + os.path.dirname(out) + "\""]
         if input_is_cxx:
             cmd += ['/TP']
@@ -124,8 +126,7 @@ class CXXCompiler(object):
         cmd += self.flags
         if mode != self.CM_Link:
             cmd += self.compile_flags
-            if self.use_warnings:
-                cmd += self.warning_flags
+            cmd += self.warning_flags
         if mode != self.CM_PreProcess and mode != self.CM_Compile:
             cmd += self.link_flags
         cmd += flags

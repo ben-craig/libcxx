@@ -80,7 +80,7 @@ class Configuration(object):
             "type_traits",
             "utility",
         ]
-        for header in self.target_info.header_subset():
+        for header in header_subset: # self.target_info.header_subset():
             self.config.available_features.add('header.{0}'.format(header))
         self.config.available_features.add('fsized-deallocation')
         self.config.available_features.add('-faligned-allocation')

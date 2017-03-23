@@ -11,6 +11,8 @@ import errno
 import os
 import time
 import random
+import re
+from lit.util import to_bytes, to_string
 
 import lit.Test        # pylint: disable=import-error
 import lit.TestRunner  # pylint: disable=import-error
@@ -38,10 +40,10 @@ class LibcxxTestFormat(object):
         self.test_cxx = CXXCompiler(None)
         pass
 
-    def _add_header_requirements(self):
+    def _add_header_requirements(self, test):
         includes_re = re.compile(to_bytes(r"#include\s+<([^>]*)>"))
 
-        with open(source_path, 'rb') as f:
+        with open(test.getSourcePath(), 'rb') as f:
             # Read the entire file contents.
             data = f.read()
             # Ensure the data ends with a newline.
@@ -95,7 +97,7 @@ class LibcxxTestFormat(object):
         if test.config.unsupported:
             return (lit.Test.UNSUPPORTED,
                     "A lit.local.cfg marked this unsupported")
-        self._add_header_requirements()
+        self._add_header_requirements(test)
 
         script = lit.TestRunner.parseIntegratedTestScript(
             test, require_script=is_sh_test)
@@ -114,14 +116,14 @@ class LibcxxTestFormat(object):
         substitutions = lit.TestRunner.getDefaultSubstitutions(test, tmpDir,
                                                                tmpBase)
         script = lit.TestRunner.applySubstitutions(script, substitutions)
-
+        test_cxx = CXXCompiler(None)
         # Dispatch the test based on its suffix.
         if is_sh_test:
             return lit.Test.UNSUPPORTED, 'ShTest format not yet supported'
         elif is_fail_test:
-            return self._evaluate_fail_test(test)
+            return self._evaluate_fail_test(test, test_cxx)
         elif is_pass_test:
-            return self._evaluate_pass_test(test, tmpBase)
+            return self._evaluate_pass_test(test, tmpBase, test_cxx)
         else:
             # No other test type is supported
             assert False
