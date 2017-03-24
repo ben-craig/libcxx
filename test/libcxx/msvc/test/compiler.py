@@ -66,7 +66,7 @@ class CXXCompiler(object):
             #"/Fd\"..\x64\Debug\vc140.pdb\"",
             "/Gz",
             #"/FI\"C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\shared\warning.h\"",
-            "/errorReport:prompt",
+            "/errorReport:none",
             "/kernel",
             "-cbstring",
             "-d2epilogunwind",

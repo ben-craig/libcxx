@@ -58,6 +58,7 @@ class LibcxxTestFormat(object):
                 # Python 2, to avoid other code having to differentiate between the
                 # str and unicode types.
                 header = match.group(1)
+                header = header.replace("/", "_")
                 test.requires.append(to_string(('header.'+header).decode('utf-8')))
 
     # TODO: Move this into lit's FileBasedTest
@@ -119,7 +120,7 @@ class LibcxxTestFormat(object):
         test_cxx = CXXCompiler(None)
         # Dispatch the test based on its suffix.
         if is_sh_test:
-            return lit.Test.UNSUPPORTED, 'ShTest format not yet supported'
+            return (lit.Test.UNSUPPORTED, 'ShTest format not yet supported')
         elif is_fail_test:
             return self._evaluate_fail_test(test, test_cxx)
         elif is_pass_test:
@@ -147,8 +148,8 @@ class LibcxxTestFormat(object):
             if rc != 0:
                 report = libcxx.util.makeReport(cmd, out, err, rc)
                 report += "Compilation failed unexpectedly!"
-                return lit.Test.FAIL, report
-            return lit.Test.PASS
+                return (lit.Test.FAIL, report)
+            return (lit.Test.PASS, '')
             # TODO run the test
         finally:
             # Note that cleanup of exec_file happens in `_clean()`. If you
@@ -162,10 +163,10 @@ class LibcxxTestFormat(object):
         with open(source_path, 'r') as f:
             contents = f.read()
         cmd, out, err, rc = test_cxx.compile(source_path, out=os.devnull)
-        expected_rc = 1
+        expected_rc = 2
         if rc == expected_rc:
-            return lit.Test.PASS, ''
+            return (lit.Test.PASS, '')
         else:
             report = libcxx.util.makeReport(cmd, out, err, rc)
             report_msg = 'Expected compilation to fail!'
-            return lit.Test.FAIL, report + report_msg + '\n'
+            return (lit.Test.FAIL, report + report_msg + '\n')
