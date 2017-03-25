@@ -61,18 +61,17 @@ class Configuration(object):
         pass
 
     def configure(self):
-        c_header_subset = [
+        header_subset = [
             "float.h",
-            "iso646.h",
+            #"iso646.h",
             "limits.h",
-            "stdalign.h",
+            #"stdalign.h",
             "stdarg.h",
-            "stdbool.h",
+            #"stdbool.h",
             "stddef.h",
             "stdint.h",
-            "stdnoreturn.h",
-        ]
-        cpp_header_subset = [
+            #"stdnoreturn.h",
+
             "algorithm", #
             "array", #
             "atomic",
@@ -93,7 +92,6 @@ class Configuration(object):
             "type_traits",
             "utility", #
         ]
-        header_subset = cpp_header_subset = c_header_subset
         for header in header_subset: # self.target_info.header_subset():
             self.config.available_features.add('header.{0}'.format(header))
         self.config.available_features.add('fsized-deallocation')

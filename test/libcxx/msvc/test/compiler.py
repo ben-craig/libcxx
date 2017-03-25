@@ -27,6 +27,7 @@ class CXXCompiler(object):
         self.flags = list(flags or [])
         #self.compile_flags = list(compile_flags or [])
         self.compile_flags = [
+            r'/IC:\src\libcxx\test\support',
             r'/IC:\src\libcxx\include',
             r'/IC:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\km\crt',
             r'/IC:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\km',
@@ -106,9 +107,11 @@ class CXXCompiler(object):
         cmd = [self.path]
         if out is not None:
             if mode == self.CM_PreProcess:
-                cmd += ['/Fi' + os.path.dirname(out)]
+                #cmd += ['/Fi' + os.path.dirname(out)]
+                cmd += ['/Fi' + out]
             elif mode == self.CM_Compile:
-                cmd += ['/Fo' + os.path.dirname(out)]
+                #cmd += ['/Fo' + os.path.dirname(out)]
+                cmd += ['/Fo' + out]
             elif mode == self.CM_Link:
                 cmd += ["/OUT:\"" + os.path.dirname(out) + "\""]
         if input_is_cxx:

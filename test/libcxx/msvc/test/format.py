@@ -124,7 +124,7 @@ class LibcxxTestFormat(object):
         elif is_fail_test:
             return self._evaluate_fail_test(test, test_cxx)
         elif is_pass_test:
-            return self._evaluate_pass_test(test, tmpBase, test_cxx)
+            return self._evaluate_pass_test(test, tmpDir, test_cxx)
         else:
             # No other test type is supported
             assert False
@@ -132,13 +132,13 @@ class LibcxxTestFormat(object):
     def _clean(self, exec_path):  # pylint: disable=no-self-use
         libcxx.util.cleanFile(exec_path)
 
-    def _evaluate_pass_test(self, test, tmpBase, test_cxx):
+    def _evaluate_pass_test(self, test, tmpDir, test_cxx):
         execDir = os.path.dirname(test.getExecPath())
         source_path = test.getSourcePath()
-        exec_path = tmpBase + '.exe'
-        object_path = tmpBase + '.obj'
+        exec_path = os.path.join(tmpDir, os.path.basename(source_path) + '.exe')
+        object_path = os.path.join(tmpDir,os.path.basename(source_path) + '.obj')
         # Create the output directory if it does not already exist.
-        lit.util.mkdir_p(os.path.dirname(tmpBase))
+        lit.util.mkdir_p(tmpDir)
         try:
             # Compile the test
             cmd, out, err, rc = test_cxx.compileLinkTwoSteps(

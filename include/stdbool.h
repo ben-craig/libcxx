@@ -26,7 +26,8 @@ Macros:
 #pragma GCC system_header
 #endif
 
-#include_next <stdbool.h>
+#include <../../km/crt/stdbool.h>
+//#include_next <stdbool.h>
 
 #ifdef __cplusplus
 #undef bool
