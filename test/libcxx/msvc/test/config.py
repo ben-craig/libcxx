@@ -61,8 +61,20 @@ class Configuration(object):
         pass
 
     def configure(self):
-        header_subset = [
-            "algorithm",
+        c_header_subset = [
+            "float.h",
+            "iso646.h",
+            "limits.h",
+            "stdalign.h",
+            "stdarg.h",
+            "stdbool.h",
+            "stddef.h",
+            "stdint.h",
+            "stdnoreturn.h",
+        ]
+        cpp_header_subset = [
+            "algorithm", #
+            "array", #
             "atomic",
             "cfloat",
             "ciso646",
@@ -75,11 +87,13 @@ class Configuration(object):
             "cstdlib",
             "initializer_list",
             "limits",
-            "memory",
-            "tuple",
+            "memory", #
+            "new",
+            "tuple", #
             "type_traits",
-            "utility",
+            "utility", #
         ]
+        header_subset = cpp_header_subset = c_header_subset
         for header in header_subset: # self.target_info.header_subset():
             self.config.available_features.add('header.{0}'.format(header))
         self.config.available_features.add('fsized-deallocation')
