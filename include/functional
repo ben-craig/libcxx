@@ -1635,15 +1635,16 @@ public:
     function& operator=(const function&);
     function& operator=(function&&) _NOEXCEPT;
     function& operator=(nullptr_t) _NOEXCEPT;
+#if 0
     template<class _Fp>
       typename enable_if
       <
-        __callable<typename decay<_Fp>::type>::value &&
-        !is_same<typename remove_reference<_Fp>::type, function>::value,
-        function&
+		function<_Rp(_ArgTypes...)>::template __callable<typename decay<_Fp>::type>::value &&
+        !is_same<typename remove_reference<_Fp>::type, function<_Rp(_ArgTypes...)>>::value,
+        function<_Rp(_ArgTypes...)>&
       >::type
       operator=(_Fp&&);
-
+#endif
     ~function();
 
     // function modifiers:
@@ -1843,6 +1844,7 @@ function<_Rp(_ArgTypes...)>::operator=(nullptr_t) _NOEXCEPT
     return *this;
 }
 
+#if 0
 template<class _Rp, class ..._ArgTypes>
 template <class _Fp>
 typename enable_if
@@ -1856,6 +1858,7 @@ function<_Rp(_ArgTypes...)>::operator=(_Fp&& __f)
     function(_VSTD::forward<_Fp>(__f)).swap(*this);
     return *this;
 }
+#endif
 
 template<class _Rp, class ..._ArgTypes>
 function<_Rp(_ArgTypes...)>::~function()
@@ -2391,6 +2394,7 @@ struct _LIBCPP_TEMPLATE_VIS hash<char32_t>
 
 #endif  // _LIBCPP_HAS_NO_UNICODE_CHARS
 
+#if _LIBCPP_HAS_SANE_WCHAR_T
 template <>
 struct _LIBCPP_TEMPLATE_VIS hash<wchar_t>
     : public unary_function<wchar_t, size_t>
@@ -2398,6 +2402,15 @@ struct _LIBCPP_TEMPLATE_VIS hash<wchar_t>
     _LIBCPP_INLINE_VISIBILITY
     size_t operator()(wchar_t __v) const _NOEXCEPT {return static_cast<size_t>(__v);}
 };
+#else // _LIBCPP_HAS_SANE_WCHAR_T
+template <>
+struct _LIBCPP_TEMPLATE_VIS hash<__wchar_t>
+	: public unary_function<__wchar_t, size_t>
+{
+	_LIBCPP_INLINE_VISIBILITY
+		size_t operator()(__wchar_t __v) const _NOEXCEPT { return static_cast<size_t>(__v); }
+};
+#endif // _LIBCPP_HAS_SANE_WCHAR_T
 
 template <>
 struct _LIBCPP_TEMPLATE_VIS hash<short>

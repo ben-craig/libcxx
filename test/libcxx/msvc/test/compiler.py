@@ -23,7 +23,8 @@ class CXXCompiler(object):
                  warning_flags=None, compile_env=None):
         # TODO: HACK populate these
         #self.path = path
-        self.path = r'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\cl.exe'
+        #self.path = r'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\cl.exe'
+        self.path = r'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX64\x64\cl.exe'
         self.flags = list(flags or [])
         #self.compile_flags = list(compile_flags or [])
         self.compile_flags = [
@@ -93,7 +94,7 @@ class CXXCompiler(object):
         #else:
         #    self.compile_env = None
         self.compile_env = os.environ.copy()
-        self.compile_env["PATH"] = r'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin;' + self.compile_env["PATH"]
+        #self.compile_env["PATH"] = r'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin;' + self.compile_env["PATH"]
 
     def copy(self):
         new_cxx = CXXCompiler(

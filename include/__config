@@ -1009,4 +1009,16 @@ _LIBCPP_FUNC_VIS extern "C" void __sanitizer_annotate_contiguous_container(
 #define _LIBCPP_HAS_NO_LONG_LONG
 #define _LIBCPP_NO_EXCEPTIONS
 
+#ifndef _LIBCPP_HAS_SANE_WCHAR_T
+	#ifdef _MSC_VER
+		#ifdef _NATIVE_WCHAR_T_DEFINED
+			#define _LIBCPP_HAS_SANE_WCHAR_T 1
+		#else
+			#define _LIBCPP_HAS_SANE_WCHAR_T 0
+		#endif
+	#else //_MSC_VER
+		#define _LIBCPP_HAS_SANE_WCHAR_T 1
+	#endif
+#endif // _LIBCPP_HAS_SANE_WCHAR_T
+
 #endif // _LIBCPP_CONFIG

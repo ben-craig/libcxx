@@ -62,6 +62,9 @@ class Configuration(object):
 
     def configure(self):
         header_subset = [
+            "cmpxchg_loop.h",#
+            
+            "assert.h",#
             "float.h",
             #"iso646.h",
             "limits.h",
@@ -75,6 +78,7 @@ class Configuration(object):
             "algorithm", #
             "array", #
             "atomic",
+            "cassert", #
             "cfloat",
             "ciso646",
             "climits",
@@ -84,10 +88,13 @@ class Configuration(object):
             "cstddef",
             "cstdint",
             "cstdlib",
+            "functional", #
             "initializer_list",
+            "iterator",
             "limits",
             "memory", #
             "new",
+            "numeric", #
             "tuple", #
             "type_traits",
             "utility", #
