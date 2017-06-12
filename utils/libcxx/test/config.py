@@ -131,7 +131,7 @@ class Configuration(object):
         self.cxx.configure_ccache(self)
         self.cxx.configure_compile_flags(self)
         self.configure_filesystem_compile_flags()
-        self.configure_link_flags()
+        self.cxx.configure_link_flags(self)
         self.configure_env()
         self.configure_color_diagnostics()
         self.configure_debug_mode()
@@ -388,129 +388,6 @@ class Configuration(object):
 
         self.cxx.add_pp_string_flag('LIBCXX_FILESYSTEM_DYNAMIC_TEST_HELPER', '%s %s'
                                    % (sys.executable, dynamic_helper))
-
-
-    def configure_link_flags(self):
-        no_default_flags = self.get_lit_bool('no_default_flags', False)
-        if not no_default_flags:
-            # Configure library path
-            self.configure_link_flags_cxx_library_path()
-            self.configure_link_flags_abi_library_path()
-
-            # Configure libraries
-            if self.cxx_stdlib_under_test == 'libc++':
-                self.cxx.link_flags += ['-nodefaultlibs']
-                # FIXME: Handle MSVCRT as part of the ABI library handling.
-                if self.is_windows:
-                    self.cxx.link_flags += ['-nostdlib']
-                self.configure_link_flags_cxx_library()
-                self.configure_link_flags_abi_library()
-                self.configure_extra_library_flags()
-            elif self.cxx_stdlib_under_test == 'libstdc++':
-                enable_fs = self.get_lit_bool('enable_filesystem',
-                                              default=False)
-                if enable_fs:
-                    self.config.available_features.add('c++experimental')
-                    self.cxx.link_flags += ['-lstdc++fs']
-                self.cxx.link_flags += ['-lm', '-pthread']
-            elif self.cxx_stdlib_under_test == 'msvc':
-                # FIXME: Correctly setup debug/release flags here.
-                pass
-            elif self.cxx_stdlib_under_test == 'cxx_default':
-                self.cxx.link_flags += ['-pthread']
-            else:
-                self.lit_config.fatal(
-                    'unsupported value for "use_stdlib_type": %s'
-                    %  use_stdlib_type)
-
-        link_flags_str = self.get_lit_conf('link_flags', '')
-        self.cxx.link_flags += shlex.split(link_flags_str)
-
-    def configure_link_flags_cxx_library_path(self):
-        if not self.use_system_cxx_lib:
-            if self.cxx_library_root:
-                self.cxx.link_flags += ['-L' + self.cxx_library_root]
-                if self.is_windows and self.link_shared:
-                    self.add_path(self.cxx.compile_env, self.cxx_library_root)
-            if self.cxx_runtime_root:
-                if not self.is_windows:
-                    self.cxx.link_flags += ['-Wl,-rpath,' +
-                                            self.cxx_runtime_root]
-                elif self.is_windows and self.link_shared:
-                    self.add_path(self.exec_env, self.cxx_runtime_root)
-        elif os.path.isdir(str(self.use_system_cxx_lib)):
-            self.cxx.link_flags += ['-L' + self.use_system_cxx_lib]
-            if not self.is_windows:
-                self.cxx.link_flags += ['-Wl,-rpath,' +
-                                        self.use_system_cxx_lib]
-            if self.is_windows and self.link_shared:
-                self.add_path(self.cxx.compile_env, self.use_system_cxx_lib)
-
-    def configure_link_flags_abi_library_path(self):
-        # Configure ABI library paths.
-        self.abi_library_root = self.get_lit_conf('abi_library_path')
-        if self.abi_library_root:
-            self.cxx.link_flags += ['-L' + self.abi_library_root]
-            if not self.is_windows:
-                self.cxx.link_flags += ['-Wl,-rpath,' + self.abi_library_root]
-            else:
-                self.add_path(self.exec_env, self.abi_library_root)
-
-    def configure_link_flags_cxx_library(self):
-        libcxx_experimental = self.get_lit_bool('enable_experimental', default=False)
-        if libcxx_experimental:
-            self.config.available_features.add('c++experimental')
-            self.cxx.link_flags += ['-lc++experimental']
-        if self.link_shared:
-            self.cxx.link_flags += ['-lc++']
-        else:
-            cxx_library_root = self.get_lit_conf('cxx_library_root')
-            if cxx_library_root:
-                libname = self.make_static_lib_name('c++')
-                abs_path = os.path.join(cxx_library_root, libname)
-                assert os.path.exists(abs_path) and \
-                       "static libc++ library does not exist"
-                self.cxx.link_flags += [abs_path]
-            else:
-                self.cxx.link_flags += ['-lc++']
-
-    def configure_link_flags_abi_library(self):
-        cxx_abi = self.get_lit_conf('cxx_abi', 'libcxxabi')
-        if cxx_abi == 'libstdc++':
-            self.cxx.link_flags += ['-lstdc++']
-        elif cxx_abi == 'libsupc++':
-            self.cxx.link_flags += ['-lsupc++']
-        elif cxx_abi == 'libcxxabi':
-            if self.target_info.allow_cxxabi_link():
-                libcxxabi_shared = self.get_lit_bool('libcxxabi_shared', default=True)
-                if libcxxabi_shared:
-                    self.cxx.link_flags += ['-lc++abi']
-                else:
-                    cxxabi_library_root = self.get_lit_conf('abi_library_path')
-                    if cxxabi_library_root:
-                        libname = self.make_static_lib_name('c++abi')
-                        abs_path = os.path.join(cxxabi_library_root, libname)
-                        self.cxx.link_flags += [abs_path]
-                    else:
-                        self.cxx.link_flags += ['-lc++abi']
-        elif cxx_abi == 'libcxxrt':
-            self.cxx.link_flags += ['-lcxxrt']
-        elif cxx_abi == 'vcruntime':
-            debug_suffix = 'd' if self.debug_build else ''
-            self.cxx.link_flags += ['-l%s%s' % (lib, debug_suffix) for lib in
-                                    ['vcruntime', 'ucrt', 'msvcrt']]
-        elif cxx_abi == 'none' or cxx_abi == 'default':
-            if self.is_windows:
-                debug_suffix = 'd' if self.debug_build else ''
-                self.cxx.link_flags += ['-lmsvcrt%s' % debug_suffix]
-        else:
-            self.lit_config.fatal(
-                'C++ ABI setting %s unsupported for tests' % cxx_abi)
-
-    def configure_extra_library_flags(self):
-        if self.get_lit_bool('cxx_ext_threads', default=False):
-            self.cxx.link_flags += ['-lc++external_threads']
-        self.target_info.add_cxx_link_flags(self.cxx.link_flags)
 
     def configure_color_diagnostics(self):
         use_color = self.get_lit_conf('color_diagnostics')
