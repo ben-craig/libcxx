@@ -17,7 +17,7 @@ import shlex
 import shutil
 import sys
 
-from libcxx.compiler import CXXCompiler
+from libcxx.compiler import make_compiler
 from libcxx.test.target_info import make_target_info
 from libcxx.test.executor import *
 from libcxx.test.tracing import *
@@ -57,7 +57,6 @@ class Configuration(object):
         self.config = config
         self.is_windows = platform.system() == 'Windows'
         self.cxx = None
-        self.cxx_is_clang_cl = None
         self.cxx_stdlib_under_test = None
         self.project_obj_root = None
         self.libcxx_src_root = None
@@ -199,61 +198,7 @@ class Configuration(object):
         self.target_info = make_target_info(self)
 
     def configure_cxx(self):
-        # Gather various compiler parameters.
-        cxx = self.get_lit_conf('cxx_under_test')
-        self.cxx_is_clang_cl = cxx is not None and \
-                               os.path.basename(cxx) == 'clang-cl.exe'
-        # If no specific cxx_under_test was given, attempt to infer it as
-        # clang++.
-        if cxx is None or self.cxx_is_clang_cl:
-            search_paths = self.config.environment['PATH']
-            if cxx is not None and os.path.isabs(cxx):
-                search_paths = os.path.dirname(cxx)
-            clangxx = libcxx.util.which('clang++', search_paths)
-            if clangxx:
-                cxx = clangxx
-                self.lit_config.note(
-                    "inferred cxx_under_test as: %r" % cxx)
-            elif self.cxx_is_clang_cl:
-                self.lit_config.fatal('Failed to find clang++ substitution for'
-                                      ' clang-cl')
-        if not cxx:
-            self.lit_config.fatal('must specify user parameter cxx_under_test '
-                                  '(e.g., --param=cxx_under_test=clang++)')
-        self.cxx = CXXCompiler(cxx) if not self.cxx_is_clang_cl else \
-                   self._configure_clang_cl(cxx)
-        cxx_type = self.cxx.type
-        if cxx_type is not None:
-            assert self.cxx.version is not None
-            maj_v, min_v, _ = self.cxx.version
-            self.config.available_features.add(cxx_type)
-            self.config.available_features.add('%s-%s' % (cxx_type, maj_v))
-            self.config.available_features.add('%s-%s.%s' % (
-                cxx_type, maj_v, min_v))
-        self.cxx.compile_env = dict(os.environ)
-        # 'CCACHE_CPP2' prevents ccache from stripping comments while
-        # preprocessing. This is required to prevent stripping of '-verify'
-        # comments.
-        self.cxx.compile_env['CCACHE_CPP2'] = '1'
-
-    def _configure_clang_cl(self, clang_path):
-        def _split_env_var(var):
-            return [p.strip() for p in os.environ.get(var, '').split(';') if p.strip()]
-
-        def _prefixed_env_list(var, prefix):
-            from itertools import chain
-            return list(chain.from_iterable((prefix, path) for path in _split_env_var(var)))
-
-        assert self.cxx_is_clang_cl
-        flags = []
-        compile_flags = _prefixed_env_list('INCLUDE', '-isystem')
-        link_flags = _prefixed_env_list('LIB', '-L')
-        for path in _split_env_var('LIB'):
-            self.add_path(self.exec_env, path)
-        return CXXCompiler(clang_path, flags=flags,
-                           compile_flags=compile_flags,
-                           link_flags=link_flags)
-
+        self.cxx = make_compiler(self)
 
     def configure_src_root(self):
         self.libcxx_src_root = self.get_lit_conf(

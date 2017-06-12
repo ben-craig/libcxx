@@ -11,6 +11,65 @@ import platform
 import os
 import libcxx.util
 
+def make_compiler(full_config):
+    # Gather various compiler parameters.
+    cxx_conf = full_config.get_lit_conf('cxx_under_test')
+
+    cxx_is_clang_cl = cxx_conf is not None and \
+                           os.path.basename(cxx_conf) == 'clang-cl.exe'
+    # If no specific cxx_under_test was given, attempt to infer it as
+    # clang++.
+    if cxx_conf is None or cxx_is_clang_cl:
+        search_paths = full_config.config.environment['PATH']
+        if cxx_conf is not None and os.path.isabs(cxx_conf):
+            search_paths = os.path.dirname(cxx_conf)
+        clangxx = libcxx.util.which('clang++', search_paths)
+        if clangxx:
+            cxx_conf = clangxx
+            full_config.lit_config.note(
+                "inferred cxx_under_test as: %r" % cxx_conf)
+        elif cxx_is_clang_cl:
+            full_config.lit_config.fatal('Failed to find clang++ substitution for'
+                                  ' clang-cl')
+    if not cxx_conf:
+        full_config.lit_config.fatal('must specify user parameter cxx_under_test '
+                              '(e.g., --param=cxx_under_test=clang++)')
+
+    if cxx_is_clang_cl:
+        cxx = make_clang_cl(cxx_conf, full_config)
+    else:
+        cxx = CXXCompiler(cxx_conf)
+    cxx_type = cxx.type
+    if cxx_type is not None:
+        assert cxx.version is not None
+        maj_v, min_v, _ = cxx.version
+        full_config.config.available_features.add(cxx_type)
+        full_config.config.available_features.add('%s-%s' % (cxx_type, maj_v))
+        full_config.config.available_features.add('%s-%s.%s' % (
+            cxx_type, maj_v, min_v))
+    cxx.compile_env = dict(os.environ)
+    # 'CCACHE_CPP2' prevents ccache from stripping comments while
+    # preprocessing. This is required to prevent stripping of '-verify'
+    # comments.
+    cxx.compile_env['CCACHE_CPP2'] = '1'
+    return cxx
+
+def make_clang_cl(cxx_conf, full_config):
+    def _split_env_var(var):
+        return [p.strip() for p in os.environ.get(var, '').split(';') if p.strip()]
+
+    def _prefixed_env_list(var, prefix):
+        from itertools import chain
+        return list(chain.from_iterable((prefix, path) for path in _split_env_var(var)))
+
+    flags = []
+    compile_flags = _prefixed_env_list('INCLUDE', '-isystem')
+    link_flags = _prefixed_env_list('LIB', '-L')
+    for path in _split_env_var('LIB'):
+        full_config.add_path(full_config.exec_env, path)
+    return CXXCompiler(cxx_conf, flags=flags,
+                       compile_flags=compile_flags,
+                       link_flags=link_flags)
 
 class CXXCompiler(object):
     CM_Default = 0
