@@ -40,19 +40,8 @@ def make_compiler(full_config):
         cxx = make_clang_cl(cxx_path, full_config)
     else:
         cxx = CXXCompiler(cxx_path)
-    cxx_type = cxx.type
-    if cxx_type is not None:
-        assert cxx.version is not None
-        maj_v, min_v, _ = cxx.version
-        full_config.config.available_features.add(cxx_type)
-        full_config.config.available_features.add('%s-%s' % (cxx_type, maj_v))
-        full_config.config.available_features.add('%s-%s.%s' % (
-            cxx_type, maj_v, min_v))
     cxx.compile_env = dict(os.environ)
-    # 'CCACHE_CPP2' prevents ccache from stripping comments while
-    # preprocessing. This is required to prevent stripping of '-verify'
-    # comments.
-    cxx.compile_env['CCACHE_CPP2'] = '1'
+
     return cxx
 
 def make_clang_cl(cxx_conf, full_config):
@@ -158,10 +147,21 @@ class CXXCompiler(CXXCompilerInterface):
         use_ccache_default = os.environ.get('LIBCXX_USE_CCACHE') is not None
         use_ccache = full_config.get_lit_bool('use_ccache', use_ccache_default)
         if use_ccache:
+            # 'CCACHE_CPP2' prevents ccache from stripping comments while
+            # preprocessing. This is required to prevent stripping of '-verify'
+            # comments.
+            self.compile_env['CCACHE_CPP2'] = '1'
+
             self.use_ccache = True
             full_config.lit_config.note('enabling ccache')
 
     def add_features(self, features, full_config):
+        if self.type is not None:
+            assert self.version is not None
+            maj_v, min_v, _ = self.version
+            features.add(self.type)
+            features.add('%s-%s' % (self.type, maj_v))
+            features.add('%s-%s.%s' % (self.type, maj_v, min_v))
         # Run a compile test for the -fsized-deallocation flag. This is needed
         # in test/std/language.support/support.dynamic/new.delete
         if self.hasCompileFlag('-fsized-deallocation'):
