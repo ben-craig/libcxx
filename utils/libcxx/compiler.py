@@ -72,7 +72,7 @@ class CXXCompilerInterface(object):
     def configure_link_flags(self, full_config): pass
     def isVerifySupported(self): return False
     def hasCompileFlag(self, flag): return False
-    def dumpMacros(self, source_files=None, flags=[], cwd=None): return {}
+    def tryDumpMacros(self, source_files=None, flags=[], cwd=None): return {}
     def addFlagIfSupported(self, flag): return False
     def useCCache(self, value=True): pass
     def useWarnings(self, value=True): pass
@@ -206,7 +206,7 @@ class CXXCompiler(CXXCompilerInterface):
 
         # Attempt to detect the glibc version by querying for __GLIBC__
         # in 'features.h'.
-        macros = self.dumpMacros(flags=['-include', 'features.h'])
+        macros = self.tryDumpMacros(flags=['-include', 'features.h'])
         if macros is not None and '__GLIBC__' in macros:
             maj_v, min_v = (macros['__GLIBC__'], macros['__GLIBC_MINOR__'])
             features.add('glibc')
@@ -248,8 +248,6 @@ class CXXCompiler(CXXCompilerInterface):
     def _initTypeAndVersion(self):
         # Get compiler type and version
         macros = self.dumpMacros()
-        if macros is None:
-            return
         compiler_type = None
         major_ver = minor_ver = patchlevel = None
         if '__clang__' in macros.keys():
@@ -368,7 +366,7 @@ class CXXCompiler(CXXCompilerInterface):
             return (cc_cmd + ['&&'] + link_cmd, cc_stdout + link_stdout,
                     cc_stderr + link_stderr, rc)
 
-    def dumpMacros(self, source_files=None, flags=[], cwd=None):
+    def tryDumpMacros(self, source_files=None, flags=[], cwd=None):
         if source_files is None:
             source_files = os.devnull
         flags = ['-dM'] + flags
@@ -384,6 +382,11 @@ class CXXCompiler(CXXCompilerInterface):
             parsed_macros[macro] = value
         return parsed_macros
 
+    def dumpMacros(self, source_files=None, flags=[], cwd=None):
+        retval = self.tryDumpMacros(source_files, flags, cwd)
+        if retval is None:
+            raise RuntimeError('dumpMacros failed to run.\nSource: %s\nFlags %s' % (source_files, flags))
+        return retval
     def getTriple(self):
         cmd = [self.path] + self.flags + ['-dumpmachine']
         return libcxx.util.capture(cmd).strip()
