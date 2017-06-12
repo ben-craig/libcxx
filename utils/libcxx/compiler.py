@@ -73,6 +73,7 @@ def make_clang_cl(cxx_conf, full_config):
 
 class CXXCompilerInterface(object):
     def print_config_info(self, full_config): pass
+    def configure_use_thread_safety(self, full_config): pass
     def isVerifySupported(self): return False
     def hasCompileFlag(self, flag): return False
     def dumpMacros(self, source_files=None, flags=[], cwd=None): return {}
@@ -141,6 +142,13 @@ class CXXCompiler(CXXCompilerInterface):
         if len(self.warning_flags):
             full_config.lit_config.note('Using warnings: %s' % self.warning_flags)
         full_config.lit_config.note('Using link flags: %s' % self.link_flags)
+
+    def configure_use_thread_safety(self, full_config):
+        has_thread_safety = self.hasCompileFlag('-Werror=thread-safety')
+        if has_thread_safety:
+            self.compile_flags += ['-Werror=thread-safety']
+            full_config.config.available_features.add('thread-safety')
+            full_config.lit_config.note("enabling thread-safety annotations")
 
     def isVerifySupported(self):
         if self.verify_supported is None:

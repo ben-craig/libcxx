@@ -126,7 +126,7 @@ class Configuration(object):
         self.configure_cxx_stdlib_under_test()
         self.configure_cxx_library_root()
         self.configure_use_clang_verify()
-        self.configure_use_thread_safety()
+        self.cxx.configure_use_thread_safety(self)
         self.configure_execute_external()
         self.configure_ccache()
         self.configure_compile_flags()
@@ -266,14 +266,6 @@ class Configuration(object):
                 "inferred use_clang_verify as: %r" % self.use_clang_verify)
         if self.use_clang_verify:
                 self.config.available_features.add('verify-support')
-
-    def configure_use_thread_safety(self):
-        '''If set, run clang with -verify on failing tests.'''
-        has_thread_safety = self.cxx.hasCompileFlag('-Werror=thread-safety')
-        if has_thread_safety:
-            self.cxx.compile_flags += ['-Werror=thread-safety']
-            self.config.available_features.add('thread-safety')
-            self.lit_config.note("enabling thread-safety annotations")
 
     def configure_execute_external(self):
         # Choose between lit's internal shell pipeline runner and a real shell.
