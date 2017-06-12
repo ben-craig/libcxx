@@ -344,30 +344,10 @@ class Configuration(object):
         if self.long_tests:
             self.config.available_features.add('long_tests')
 
-        # Run a compile test for the -fsized-deallocation flag. This is needed
-        # in test/std/language.support/support.dynamic/new.delete
-        if self.cxx.hasCompileFlag('-fsized-deallocation'):
-            self.config.available_features.add('fsized-deallocation')
-
-        if self.cxx.hasCompileFlag('-faligned-allocation'):
-            self.config.available_features.add('-faligned-allocation')
-        else:
-            # FIXME remove this once more than just clang-4.0 support
-            # C++17 aligned allocation.
-            self.config.available_features.add('no-aligned-allocation')
+        self.cxx.add_features(self.config.available_features, self)
 
         if self.get_lit_bool('has_libatomic', False):
             self.config.available_features.add('libatomic')
-
-        macros = self.cxx.dumpMacros()
-        if '__cpp_if_constexpr' not in macros:
-            self.config.available_features.add('libcpp-no-if-constexpr')
-
-        if '__cpp_structured_bindings' not in macros:
-            self.config.available_features.add('libcpp-no-structured-bindings')
-
-        if '__cpp_deduction_guides' not in macros:
-            self.config.available_features.add('libcpp-no-deduction-guides')
 
         if self.is_windows:
             self.config.available_features.add('windows')
@@ -378,21 +358,6 @@ class Configuration(object):
                 # and regressions. Note: New failures should not be suppressed
                 # using this feature. (Also see llvm.org/PR32730)
                 self.config.available_features.add('LIBCXX-WINDOWS-FIXME')
-
-        # Attempt to detect the glibc version by querying for __GLIBC__
-        # in 'features.h'.
-        macros = self.cxx.dumpMacros(flags=['-include', 'features.h'])
-        if macros is not None and '__GLIBC__' in macros:
-            maj_v, min_v = (macros['__GLIBC__'], macros['__GLIBC_MINOR__'])
-            self.config.available_features.add('glibc')
-            self.config.available_features.add('glibc-%s' % maj_v)
-            self.config.available_features.add('glibc-%s.%s' % (maj_v, min_v))
-
-        # Support Objective-C++ only on MacOS and if the compiler supports it.
-        if self.target_info.platform() == "darwin" and \
-           self.target_info.is_host_macosx() and \
-           self.cxx.hasCompileFlag(["-x", "objective-c++", "-fobjc-arc"]):
-            self.config.available_features.add("objective-c++")
 
     def configure_compile_flags(self):
         no_default_flags = self.get_lit_bool('no_default_flags', False)

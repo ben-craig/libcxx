@@ -75,6 +75,7 @@ class CXXCompilerInterface(object):
     def print_config_info(self, full_config): pass
     def configure_use_thread_safety(self, full_config): pass
     def configure_ccache(self, full_config): pass
+    def add_features(self, features, full_config): pass
     def isVerifySupported(self): return False
     def hasCompileFlag(self, flag): return False
     def dumpMacros(self, source_files=None, flags=[], cwd=None): return {}
@@ -157,6 +158,44 @@ class CXXCompiler(CXXCompilerInterface):
         if use_ccache:
             self.use_ccache = True
             full_config.lit_config.note('enabling ccache')
+
+    def add_features(self, features, full_config):
+        # Run a compile test for the -fsized-deallocation flag. This is needed
+        # in test/std/language.support/support.dynamic/new.delete
+        if self.hasCompileFlag('-fsized-deallocation'):
+            features.add('fsized-deallocation')
+
+        if self.hasCompileFlag('-faligned-allocation'):
+            features.add('-faligned-allocation')
+        else:
+            # FIXME remove this once more than just clang-4.0 support
+            # C++17 aligned allocation.
+            features.add('no-aligned-allocation')
+
+        macros = self.dumpMacros()
+        if '__cpp_if_constexpr' not in macros:
+            features.add('libcpp-no-if-constexpr')
+
+        if '__cpp_structured_bindings' not in macros:
+            features.add('libcpp-no-structured-bindings')
+
+        if '__cpp_deduction_guides' not in macros:
+            features.add('libcpp-no-deduction-guides')
+
+        # Attempt to detect the glibc version by querying for __GLIBC__
+        # in 'features.h'.
+        macros = self.dumpMacros(flags=['-include', 'features.h'])
+        if macros is not None and '__GLIBC__' in macros:
+            maj_v, min_v = (macros['__GLIBC__'], macros['__GLIBC_MINOR__'])
+            features.add('glibc')
+            features.add('glibc-%s' % maj_v)
+            features.add('glibc-%s.%s' % (maj_v, min_v))
+
+        # Support Objective-C++ only on MacOS and if the compiler supports it.
+        if full_config.target_info.platform() == "darwin" and \
+           full_config.target_info.is_host_macosx() and \
+           self.hasCompileFlag(["-x", "objective-c++", "-fobjc-arc"]):
+            features.add("objective-c++")
 
     def isVerifySupported(self):
         if self.verify_supported is None:
