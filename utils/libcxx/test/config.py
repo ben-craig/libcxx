@@ -147,16 +147,7 @@ class Configuration(object):
 
     def print_config_info(self):
         # Print the final compile and link flags.
-        self.lit_config.note('Using compiler: %s' % self.cxx.path)
-        self.lit_config.note('Using flags: %s' % self.cxx.flags)
-        if self.cxx.use_modules:
-            self.lit_config.note('Using modules flags: %s' %
-                                 self.cxx.modules_flags)
-        self.lit_config.note('Using compile flags: %s'
-                             % self.cxx.compile_flags)
-        if len(self.cxx.warning_flags):
-            self.lit_config.note('Using warnings: %s' % self.cxx.warning_flags)
-        self.lit_config.note('Using link flags: %s' % self.cxx.link_flags)
+        self.cxx.print_config_info(self)
         # Print as list to prevent "set([...])" from being printed.
         self.lit_config.note('Using available_features: %s' %
                              list(self.config.available_features))

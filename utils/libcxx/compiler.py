@@ -108,6 +108,18 @@ class CXXCompiler(object):
         if self.type is None or self.version is None:
             self._initTypeAndVersion()
 
+    def print_config_info(self, full_config):
+        full_config.lit_config.note('Using compiler: %s' % self.path)
+        full_config.lit_config.note('Using flags: %s' % self.flags)
+        if self.use_modules:
+            full_config.lit_config.note('Using modules flags: %s' %
+                                 self.modules_flags)
+        full_config.lit_config.note('Using compile flags: %s'
+                             % self.compile_flags)
+        if len(self.warning_flags):
+            full_config.lit_config.note('Using warnings: %s' % self.warning_flags)
+        full_config.lit_config.note('Using link flags: %s' % self.link_flags)
+
     def isVerifySupported(self):
         if self.verify_supported is None:
             self.verify_supported = self.hasCompileFlag(['-Xclang',
