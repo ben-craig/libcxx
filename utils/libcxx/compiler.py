@@ -9,6 +9,7 @@
 
 import platform
 import os
+import shlex
 import libcxx.util
 
 def make_compiler(full_config):
@@ -76,6 +77,7 @@ class CXXCompilerInterface(object):
     def configure_use_thread_safety(self, full_config): pass
     def configure_ccache(self, full_config): pass
     def add_features(self, features, full_config): pass
+    def configure_compile_flags(self, full_config): pass
     def isVerifySupported(self): return False
     def hasCompileFlag(self, flag): return False
     def dumpMacros(self, source_files=None, flags=[], cwd=None): return {}
@@ -437,3 +439,200 @@ class CXXCompiler(CXXCompilerInterface):
                 self.warning_flags += [flag]
             return True
         return False
+
+    def configure_compile_flags(self, full_config):
+        no_default_flags = full_config.get_lit_bool('no_default_flags', False)
+        if not no_default_flags:
+            self.configure_default_compile_flags(full_config)
+        # This include is always needed so add so add it regardless of
+        # 'no_default_flags'.
+        support_path = os.path.join(full_config.libcxx_src_root, 'test/support')
+        self.compile_flags += ['-I' + support_path]
+        # Configure extra flags
+        compile_flags_str = full_config.get_lit_conf('compile_flags', '')
+        self.compile_flags += shlex.split(compile_flags_str)
+        if full_config.is_windows:
+            # FIXME: Can we remove this?
+            self.compile_flags += ['-D_CRT_SECURE_NO_WARNINGS']
+            # Required so that tests using min/max don't fail on Windows,
+            # and so that those tests don't have to be changed to tolerate
+            # this insanity.
+            self.compile_flags += ['-DNOMINMAX']
+
+    def configure_default_compile_flags(self, full_config):
+        # Try and get the std version from the command line. Fall back to
+        # default given in lit.site.cfg is not present. If default is not
+        # present then force c++11.
+        std = full_config.get_lit_conf('std')
+        if not std:
+            # Choose the newest possible language dialect if none is given.
+            possible_stds = ['c++1z', 'c++14', 'c++11', 'c++03']
+            if self.type == 'gcc':
+                maj_v, _, _ = self.version
+                maj_v = int(maj_v)
+                if maj_v < 7:
+                    possible_stds.remove('c++1z')
+                # FIXME: How many C++14 tests actually fail under GCC 5 and 6?
+                # Should we XFAIL them individually instead?
+                if maj_v <= 6:
+                    possible_stds.remove('c++14')
+            for s in possible_stds:
+                if self.hasCompileFlag('-std=%s' % s):
+                    std = s
+                    full_config.lit_config.note(
+                        'inferred language dialect as: %s' % std)
+                    break
+            if not std:
+                full_config.lit_config.fatal(
+                    'Failed to infer a supported language dialect from one of %r'
+                    % possible_stds)
+        self.compile_flags += ['-std={0}'.format(std)]
+        full_config.config.available_features.add(std.replace('gnu++', 'c++'))
+        # Configure include paths
+        self.configure_compile_flags_header_includes(full_config)
+        full_config.target_info.add_cxx_compile_flags(self.compile_flags)
+        # Configure feature flags.
+        self.configure_compile_flags_exceptions(full_config)
+        self.configure_compile_flags_rtti(full_config)
+        self.configure_compile_flags_abi_version(full_config)
+        enable_32bit = full_config.get_lit_bool('enable_32bit', False)
+        if enable_32bit:
+            self.flags += ['-m32']
+        # Use verbose output for better errors
+        self.flags += ['-v']
+        sysroot = full_config.get_lit_conf('sysroot')
+        if sysroot:
+            self.flags += ['--sysroot', sysroot]
+        gcc_toolchain = full_config.get_lit_conf('gcc_toolchain')
+        if gcc_toolchain:
+            self.flags += ['-gcc-toolchain', gcc_toolchain]
+        # NOTE: the _DEBUG definition must preceed the triple check because for
+        # the Windows build of libc++, the forced inclusion of a header requires
+        # that _DEBUG is defined.  Incorrect ordering will result in -target
+        # being elided.
+        if full_config.is_windows and full_config.debug_build:
+            self.compile_flags += ['-D_DEBUG']
+        if full_config.use_target:
+            if not self.addFlagIfSupported(
+                    ['-target', full_config.config.target_triple]):
+                full_config.lit_config.warning('use_target is true but -target is '\
+                        'not supported by the compiler')
+        if full_config.use_deployment:
+            arch, name, version = full_config.config.deployment
+            self.flags += ['-arch', arch]
+            self.flags += ['-m' + name + '-version-min=' + version]
+
+        # Disable availability unless explicitely requested
+        if not full_config.with_availability:
+            self.flags += ['-D_LIBCPP_DISABLE_AVAILABILITY']
+
+    def configure_compile_flags_header_includes(self, full_config):
+        support_path = os.path.join(full_config.libcxx_src_root, 'test', 'support')
+        self.configure_config_site_header(full_config)
+        if full_config.cxx_stdlib_under_test != 'libstdc++' and \
+           not full_config.is_windows:
+            self.compile_flags += [
+                '-include', os.path.join(support_path, 'nasty_macros.hpp')]
+        if full_config.cxx_stdlib_under_test == 'msvc':
+            self.compile_flags += [
+                '-include', os.path.join(support_path,
+                                         'msvc_stdlib_force_include.hpp')]
+            pass
+        if full_config.is_windows and full_config.debug_build and \
+                full_config.cxx_stdlib_under_test != 'msvc':
+            self.compile_flags += [
+                '-include', os.path.join(support_path,
+                                         'set_windows_crt_report_mode.h')
+            ]
+        cxx_headers = full_config.get_lit_conf('cxx_headers')
+        if cxx_headers == '' or (cxx_headers is None
+                                 and full_config.cxx_stdlib_under_test != 'libc++'):
+            full_config.lit_config.note('using the system cxx headers')
+            return
+        self.compile_flags += ['-nostdinc++']
+        if cxx_headers is None:
+            cxx_headers = os.path.join(full_config.libcxx_src_root, 'include')
+        if not os.path.isdir(cxx_headers):
+            full_config.lit_config.fatal("cxx_headers='%s' is not a directory."
+                                  % cxx_headers)
+        self.compile_flags += ['-I' + cxx_headers]
+        if full_config.libcxx_obj_root is not None:
+            cxxabi_headers = os.path.join(full_config.libcxx_obj_root, 'include',
+                                          'c++build')
+            if os.path.isdir(cxxabi_headers):
+                self.compile_flags += ['-I' + cxxabi_headers]
+
+    def configure_config_site_header(self, full_config):
+        # Check for a possible __config_site in the build directory. We
+        # use this if it exists.
+        if full_config.libcxx_obj_root is None:
+            return
+        config_site_header = os.path.join(full_config.libcxx_obj_root, '__config_site')
+        if not os.path.isfile(config_site_header):
+            return
+        contained_macros = self.parse_config_site_and_add_features(
+            config_site_header,
+            full_config)
+        full_config.lit_config.note('Using __config_site header %s with macros: %r'
+            % (config_site_header, contained_macros))
+        # FIXME: This must come after the call to
+        # 'parse_config_site_and_add_features(...)' in order for it to work.
+        self.compile_flags += ['-include', config_site_header]
+
+    def parse_config_site_and_add_features(self, header, full_config):
+        """ parse_config_site_and_add_features - Deduce and add the test
+            features that that are implied by the #define's in the __config_site
+            header. Return a dictionary containing the macros found in the
+            '__config_site' header.
+        """
+        # Parse the macro contents of __config_site by dumping the macros
+        # using 'c++ -dM -E' and filtering the predefines.
+        predefines = self.dumpMacros()
+        macros = self.dumpMacros(header)
+        feature_macros_keys = set(macros.keys()) - set(predefines.keys())
+        feature_macros = {}
+        for k in feature_macros_keys:
+            feature_macros[k] = macros[k]
+        # We expect the header guard to be one of the definitions
+        assert '_LIBCPP_CONFIG_SITE' in feature_macros
+        del feature_macros['_LIBCPP_CONFIG_SITE']
+        # The __config_site header should be non-empty. Otherwise it should
+        # have never been emitted by CMake.
+        assert len(feature_macros) > 0
+        # Transform each macro name into the feature name used in the tests.
+        # Ex. _LIBCPP_HAS_NO_THREADS -> libcpp-has-no-threads
+        for m in feature_macros:
+            if m == '_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS':
+                continue
+            if m == '_LIBCPP_ABI_VERSION':
+                full_config.config.available_features.add('libcpp-abi-version-v%s'
+                    % feature_macros[m])
+                continue
+            assert m.startswith('_LIBCPP_HAS_') or m == '_LIBCPP_ABI_UNSTABLE'
+            m = m.lower()[1:].replace('_', '-')
+            full_config.config.available_features.add(m)
+        return feature_macros
+
+    def configure_compile_flags_exceptions(self, full_config):
+        enable_exceptions = full_config.get_lit_bool('enable_exceptions', True)
+        if not enable_exceptions:
+            full_config.config.available_features.add('libcpp-no-exceptions')
+            self.compile_flags += ['-fno-exceptions']
+
+    def configure_compile_flags_rtti(self, full_config):
+        enable_rtti = full_config.get_lit_bool('enable_rtti', True)
+        if not enable_rtti:
+            full_config.config.available_features.add('libcpp-no-rtti')
+            self.compile_flags += ['-fno-rtti', '-D_LIBCPP_NO_RTTI']
+
+    def configure_compile_flags_abi_version(self, full_config):
+        abi_version = full_config.get_lit_conf('abi_version', '').strip()
+        abi_unstable = full_config.get_lit_bool('abi_unstable')
+        # Only add the ABI version when it is non-default.
+        # FIXME(EricWF): Get the ABI version from the "__config_site".
+        if abi_version and abi_version != '1':
+          self.compile_flags += ['-D_LIBCPP_ABI_VERSION=' + abi_version]
+        if abi_unstable:
+          full_config.config.available_features.add('libcpp-abi-unstable')
+          self.compile_flags += ['-D_LIBCPP_ABI_UNSTABLE']
+
