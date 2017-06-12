@@ -13,32 +13,32 @@ import libcxx.util
 
 def make_compiler(full_config):
     # Gather various compiler parameters.
-    cxx_conf = full_config.get_lit_conf('cxx_under_test')
+    cxx_path = full_config.get_lit_conf('cxx_under_test')
 
-    cxx_is_clang_cl = cxx_conf is not None and \
-                           os.path.basename(cxx_conf) == 'clang-cl.exe'
+    cxx_is_clang_cl = cxx_path is not None and \
+                           os.path.basename(cxx_path) == 'clang-cl.exe'
     # If no specific cxx_under_test was given, attempt to infer it as
     # clang++.
-    if cxx_conf is None or cxx_is_clang_cl:
+    if cxx_path is None or cxx_is_clang_cl:
         search_paths = full_config.config.environment['PATH']
-        if cxx_conf is not None and os.path.isabs(cxx_conf):
-            search_paths = os.path.dirname(cxx_conf)
+        if cxx_path is not None and os.path.isabs(cxx_path):
+            search_paths = os.path.dirname(cxx_path)
         clangxx = libcxx.util.which('clang++', search_paths)
         if clangxx:
-            cxx_conf = clangxx
+            cxx_path = clangxx
             full_config.lit_config.note(
-                "inferred cxx_under_test as: %r" % cxx_conf)
+                "inferred cxx_under_test as: %r" % cxx_path)
         elif cxx_is_clang_cl:
             full_config.lit_config.fatal('Failed to find clang++ substitution for'
                                   ' clang-cl')
-    if not cxx_conf:
+    if not cxx_path:
         full_config.lit_config.fatal('must specify user parameter cxx_under_test '
                               '(e.g., --param=cxx_under_test=clang++)')
 
     if cxx_is_clang_cl:
-        cxx = make_clang_cl(cxx_conf, full_config)
+        cxx = make_clang_cl(cxx_path, full_config)
     else:
-        cxx = CXXCompiler(cxx_conf)
+        cxx = CXXCompiler(cxx_path)
     cxx_type = cxx.type
     if cxx_type is not None:
         assert cxx.version is not None
