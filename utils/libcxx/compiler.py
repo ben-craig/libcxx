@@ -74,6 +74,7 @@ def make_clang_cl(cxx_conf, full_config):
 class CXXCompilerInterface(object):
     def print_config_info(self, full_config): pass
     def configure_use_thread_safety(self, full_config): pass
+    def configure_ccache(self, full_config): pass
     def isVerifySupported(self): return False
     def hasCompileFlag(self, flag): return False
     def dumpMacros(self, source_files=None, flags=[], cwd=None): return {}
@@ -149,6 +150,13 @@ class CXXCompiler(CXXCompilerInterface):
             self.compile_flags += ['-Werror=thread-safety']
             full_config.config.available_features.add('thread-safety')
             full_config.lit_config.note("enabling thread-safety annotations")
+
+    def configure_ccache(self, full_config):
+        use_ccache_default = os.environ.get('LIBCXX_USE_CCACHE') is not None
+        use_ccache = full_config.get_lit_bool('use_ccache', use_ccache_default)
+        if use_ccache:
+            self.use_ccache = True
+            full_config.lit_config.note('enabling ccache')
 
     def isVerifySupported(self):
         if self.verify_supported is None:

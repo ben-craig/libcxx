@@ -128,7 +128,7 @@ class Configuration(object):
         self.configure_use_clang_verify()
         self.cxx.configure_use_thread_safety(self)
         self.configure_execute_external()
-        self.configure_ccache()
+        self.cxx.configure_ccache(self)
         self.configure_compile_flags()
         self.configure_filesystem_compile_flags()
         self.configure_link_flags()
@@ -281,13 +281,6 @@ class Configuration(object):
         use_lit_shell = self.get_lit_bool('use_lit_shell',
                                           use_lit_shell_default)
         self.execute_external = not use_lit_shell
-
-    def configure_ccache(self):
-        use_ccache_default = os.environ.get('LIBCXX_USE_CCACHE') is not None
-        use_ccache = self.get_lit_bool('use_ccache', use_ccache_default)
-        if use_ccache:
-            self.cxx.use_ccache = True
-            self.lit_config.note('enabling ccache')
 
     def add_deployment_feature(self, feature):
         (arch, name, version) = self.config.deployment
