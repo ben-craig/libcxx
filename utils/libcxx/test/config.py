@@ -13,8 +13,6 @@ import platform
 import pkgutil
 import pipes
 import re
-import shlex
-import shutil
 import sys
 
 from libcxx.test.executor import *
@@ -135,11 +133,11 @@ class Configuration(object):
         self.configure_env()
         self.cxx.configure_color_diagnostics(self)
         self.configure_debug_mode()
-        self.configure_warnings()
-        self.configure_sanitizer()
-        self.configure_coverage()
-        self.configure_modules()
-        self.configure_coroutines()
+        self.cxx.configure_warnings(self)
+        self.cxx.configure_sanitizer(self)
+        self.cxx.configure_coverage(self)
+        self.cxx.configure_modules(self)
+        self.cxx.configure_coroutines(self)
         self.configure_substitutions()
         self.configure_features()
 
@@ -397,152 +395,6 @@ class Configuration(object):
             self.lit_config.fatal('Invalid value for debug_level "%s".'
                                   % debug_level)
         self.cxx.add_pp_int_flag('_LIBCPP_DEBUG', debug_level)
-
-    def configure_warnings(self):
-        # Turn on warnings by default for Clang based compilers when C++ >= 11
-        default_enable_warnings = self.cxx.type in ['clang', 'apple-clang'] \
-            and len(self.config.available_features.intersection(
-                ['c++11', 'c++14', 'c++1z'])) != 0
-        enable_warnings = self.get_lit_bool('enable_warnings',
-                                            default_enable_warnings)
-        self.cxx.useWarnings(enable_warnings)
-        self.cxx.warning_flags += [
-            '-D_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER',
-            '-Wall', '-Wextra', '-Werror'
-        ]
-        if self.cxx.hasWarningFlag('-Wuser-defined-warnings'):
-            self.cxx.warning_flags += ['-Wuser-defined-warnings']
-            self.config.available_features.add('diagnose-if-support')
-        self.cxx.addWarningFlagIfSupported('-Wshadow')
-        self.cxx.addWarningFlagIfSupported('-Wno-unused-command-line-argument')
-        self.cxx.addWarningFlagIfSupported('-Wno-attributes')
-        self.cxx.addWarningFlagIfSupported('-Wno-pessimizing-move')
-        self.cxx.addWarningFlagIfSupported('-Wno-c++11-extensions')
-        self.cxx.addWarningFlagIfSupported('-Wno-user-defined-literals')
-        self.cxx.addWarningFlagIfSupported('-Wno-noexcept-type')
-        # These warnings should be enabled in order to support the MSVC
-        # team using the test suite; They enable the warnings below and
-        # expect the test suite to be clean.
-        self.cxx.addWarningFlagIfSupported('-Wsign-compare')
-        self.cxx.addWarningFlagIfSupported('-Wunused-variable')
-        self.cxx.addWarningFlagIfSupported('-Wunused-parameter')
-        self.cxx.addWarningFlagIfSupported('-Wunreachable-code')
-        # FIXME: Enable the two warnings below.
-        self.cxx.addWarningFlagIfSupported('-Wno-conversion')
-        self.cxx.addWarningFlagIfSupported('-Wno-unused-local-typedef')
-        # FIXME: Remove this warning once the min/max handling patch lands
-        # See https://reviews.llvm.org/D33080
-        self.cxx.addWarningFlagIfSupported('-Wno-#warnings')
-        std = self.get_lit_conf('std', None)
-        if std in ['c++98', 'c++03']:
-            # The '#define static_assert' provided by libc++ in C++03 mode
-            # causes an unused local typedef whenever it is used.
-            self.cxx.addWarningFlagIfSupported('-Wno-unused-local-typedef')
-
-    def configure_sanitizer(self):
-        san = self.get_lit_conf('use_sanitizer', '').strip()
-        if san:
-            self.target_info.add_sanitizer_features(san, self.config.available_features)
-            # Search for llvm-symbolizer along the compiler path first
-            # and then along the PATH env variable.
-            symbolizer_search_paths = os.environ.get('PATH', '')
-            cxx_path = libcxx.util.which(self.cxx.path)
-            if cxx_path is not None:
-                symbolizer_search_paths = (
-                    os.path.dirname(cxx_path) +
-                    os.pathsep + symbolizer_search_paths)
-            llvm_symbolizer = libcxx.util.which('llvm-symbolizer',
-                                                symbolizer_search_paths)
-
-            def add_ubsan():
-                self.cxx.flags += ['-fsanitize=undefined',
-                                   '-fno-sanitize=vptr,function,float-divide-by-zero',
-                                   '-fno-sanitize-recover=all']
-                self.exec_env['UBSAN_OPTIONS'] = 'print_stacktrace=1'
-                self.config.available_features.add('ubsan')
-
-            # Setup the sanitizer compile flags
-            self.cxx.flags += ['-g', '-fno-omit-frame-pointer']
-            if san == 'Address' or san == 'Address;Undefined' or san == 'Undefined;Address':
-                self.cxx.flags += ['-fsanitize=address']
-                if llvm_symbolizer is not None:
-                    self.exec_env['ASAN_SYMBOLIZER_PATH'] = llvm_symbolizer
-                # FIXME: Turn ODR violation back on after PR28391 is resolved
-                # https://bugs.llvm.org/show_bug.cgi?id=28391
-                self.exec_env['ASAN_OPTIONS'] = 'detect_odr_violation=0'
-                self.config.available_features.add('asan')
-                self.config.available_features.add('sanitizer-new-delete')
-                self.cxx.compile_flags += ['-O1']
-                if san == 'Address;Undefined' or san == 'Undefined;Address':
-                    add_ubsan()
-            elif san == 'Memory' or san == 'MemoryWithOrigins':
-                self.cxx.flags += ['-fsanitize=memory']
-                if san == 'MemoryWithOrigins':
-                    self.cxx.compile_flags += [
-                        '-fsanitize-memory-track-origins']
-                if llvm_symbolizer is not None:
-                    self.exec_env['MSAN_SYMBOLIZER_PATH'] = llvm_symbolizer
-                self.config.available_features.add('msan')
-                self.config.available_features.add('sanitizer-new-delete')
-                self.cxx.compile_flags += ['-O1']
-            elif san == 'Undefined':
-                add_ubsan()
-                self.cxx.compile_flags += ['-O2']
-            elif san == 'Thread':
-                self.cxx.flags += ['-fsanitize=thread']
-                self.config.available_features.add('tsan')
-                self.config.available_features.add('sanitizer-new-delete')
-            else:
-                self.lit_config.fatal('unsupported value for '
-                                      'use_sanitizer: {0}'.format(san))
-            san_lib = self.get_lit_conf('sanitizer_library')
-            if san_lib:
-                self.cxx.link_flags += [
-                    san_lib, '-Wl,-rpath,%s' % os.path.dirname(san_lib)]
-
-    def configure_coverage(self):
-        self.generate_coverage = self.get_lit_bool('generate_coverage', False)
-        if self.generate_coverage:
-            self.cxx.flags += ['-g', '--coverage']
-            self.cxx.compile_flags += ['-O0']
-
-    def configure_coroutines(self):
-        if self.cxx.hasCompileFlag('-fcoroutines-ts'):
-            macros = self.cxx.dumpMacros(flags=['-fcoroutines-ts'])
-            if '__cpp_coroutines' not in macros:
-                self.lit_config.warning('-fcoroutines-ts is supported but '
-                    '__cpp_coroutines is not defined')
-            # Consider coroutines supported only when the feature test macro
-            # reflects a recent value.
-            val = macros['__cpp_coroutines'].replace('L', '')
-            if int(val) >= 201703:
-                self.config.available_features.add('fcoroutines-ts')
-
-    def configure_modules(self):
-        modules_flags = ['-fmodules']
-        if platform.system() != 'Darwin':
-            modules_flags += ['-Xclang', '-fmodules-local-submodule-visibility']
-        supports_modules = self.cxx.hasCompileFlag(modules_flags)
-        enable_modules = self.get_lit_bool('enable_modules',
-                                           default=False,
-                                           env_var='LIBCXX_ENABLE_MODULES')
-        if enable_modules and not supports_modules:
-            self.lit_config.fatal(
-                '-fmodules is enabled but not supported by the compiler')
-        if not supports_modules:
-            return
-        self.config.available_features.add('modules-support')
-        module_cache = os.path.join(self.config.test_exec_root,
-                                   'modules.cache')
-        module_cache = os.path.realpath(module_cache)
-        if os.path.isdir(module_cache):
-            shutil.rmtree(module_cache)
-        os.makedirs(module_cache)
-        self.cxx.modules_flags = modules_flags + \
-            ['-fmodules-cache-path=' + module_cache]
-        if enable_modules:
-            self.config.available_features.add('-fmodules')
-            self.cxx.useModules()
 
     def configure_substitutions(self):
         sub = self.config.substitutions
