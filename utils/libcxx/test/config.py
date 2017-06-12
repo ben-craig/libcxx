@@ -133,7 +133,7 @@ class Configuration(object):
         self.configure_filesystem_compile_flags()
         self.cxx.configure_link_flags(self)
         self.configure_env()
-        self.configure_color_diagnostics()
+        self.cxx.configure_color_diagnostics(self)
         self.configure_debug_mode()
         self.configure_warnings()
         self.configure_sanitizer()
@@ -388,25 +388,6 @@ class Configuration(object):
 
         self.cxx.add_pp_string_flag('LIBCXX_FILESYSTEM_DYNAMIC_TEST_HELPER', '%s %s'
                                    % (sys.executable, dynamic_helper))
-
-    def configure_color_diagnostics(self):
-        use_color = self.get_lit_conf('color_diagnostics')
-        if use_color is None:
-            use_color = os.environ.get('LIBCXX_COLOR_DIAGNOSTICS')
-        if use_color is None:
-            return
-        if use_color != '':
-            self.lit_config.fatal('Invalid value for color_diagnostics "%s".'
-                                  % use_color)
-        color_flag = '-fdiagnostics-color=always'
-        # Check if the compiler supports the color diagnostics flag. Issue a
-        # warning if it does not since color diagnostics have been requested.
-        if not self.cxx.hasCompileFlag(color_flag):
-            self.lit_config.warning(
-                'color diagnostics have been requested but are not supported '
-                'by the compiler')
-        else:
-            self.cxx.flags += [color_flag]
 
     def configure_debug_mode(self):
         debug_level = self.get_lit_conf('debug_level', None)

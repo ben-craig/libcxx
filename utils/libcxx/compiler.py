@@ -62,7 +62,7 @@ def make_clang_cl(cxx_conf, full_config):
                        link_flags=link_flags)
 
 class CXXCompilerInterface(object):
-    def add_pp_flag(self, name, value=None): pass
+    def add_pp_string_flag(self, name, value=None): pass
     def print_config_info(self, full_config): pass
     def configure_use_thread_safety(self, full_config): pass
     def configure_ccache(self, full_config): pass
@@ -88,6 +88,11 @@ class CXXCompilerInterface(object):
     def compile(self, source_files, out=None, flags=[], cwd=None):
         cmd, out, err, rc = ("", "", "", -1)
         return cmd, out, err, rc
+
+    def configure_color_diagnostics(self, full_config):
+        full_config.lit_config.warning(
+            'color diagnostics have been requested but are not supported '
+            'by the compiler')
 
 class CXXCompiler(CXXCompilerInterface):
     CM_Default = 0
@@ -765,4 +770,23 @@ class CXXCompiler(CXXCompilerInterface):
         if full_config.get_lit_bool('cxx_ext_threads', default=False):
             self.link_flags += ['-lc++external_threads']
         full_config.target_info.add_cxx_link_flags(self.link_flags)
+
+    def configure_color_diagnostics(self, full_config):
+        use_color = full_config.get_lit_conf('color_diagnostics')
+        if use_color is None:
+            use_color = os.environ.get('LIBCXX_COLOR_DIAGNOSTICS')
+        if use_color is None:
+            return
+        if use_color != '':
+            full_config.lit_config.fatal('Invalid value for color_diagnostics "%s".'
+                                  % use_color)
+        color_flag = '-fdiagnostics-color=always'
+        # Check if the compiler supports the color diagnostics flag. Issue a
+        # warning if it does not since color diagnostics have been requested.
+        if not self.hasCompileFlag(color_flag):
+            full_config.lit_config.warning(
+                'color diagnostics have been requested but are not supported '
+                'by the compiler')
+        else:
+            self.flags += [color_flag]
 
