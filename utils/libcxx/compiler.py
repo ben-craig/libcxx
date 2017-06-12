@@ -86,6 +86,7 @@ class CXXCompilerInterface(object):
     def configure_coverage(self, full_config): pass
     def configure_coroutines(self, full_config): pass
     def configure_modules(self, full_config): pass
+    def configure_cxx_library_root(self, full_config): pass
 
     def compileLinkTwoSteps(self, source_file, out=None, object_file=None,
                             flags=[], cwd=None):
@@ -137,6 +138,8 @@ class CXXCompiler(CXXCompilerInterface):
         self.version = cxx_version
         if self.type is None or self.version is None:
             self._initTypeAndVersion()
+        self.cxx_library_root = None
+        self.cxx_runtime_root = None
 
     def add_pp_string_flag(self, name, value=None):
         if value is None:
@@ -703,16 +706,16 @@ class CXXCompiler(CXXCompilerInterface):
 
     def configure_link_flags_cxx_library_path(self, full_config):
         if not full_config.use_system_cxx_lib:
-            if full_config.cxx_library_root:
-                self.link_flags += ['-L' + full_config.cxx_library_root]
+            if self.cxx_library_root:
+                self.link_flags += ['-L' + self.cxx_library_root]
                 if full_config.is_windows and full_config.link_shared:
-                    full_config.add_path(self.compile_env, full_config.cxx_library_root)
-            if full_config.cxx_runtime_root:
+                    full_config.add_path(self.compile_env, self.cxx_library_root)
+            if self.cxx_runtime_root:
                 if not full_config.is_windows:
                     self.link_flags += ['-Wl,-rpath,' +
-                                            full_config.cxx_runtime_root]
+                                            self.cxx_runtime_root]
                 elif full_config.is_windows and full_config.link_shared:
-                    full_config.add_path(full_config.exec_env, full_config.cxx_runtime_root)
+                    full_config.add_path(full_config.exec_env, self.cxx_runtime_root)
         elif os.path.isdir(str(full_config.use_system_cxx_lib)):
             self.link_flags += ['-L' + full_config.use_system_cxx_lib]
             if not full_config.is_windows:
@@ -951,3 +954,10 @@ class CXXCompiler(CXXCompilerInterface):
         if enable_modules:
             full_config.config.available_features.add('-fmodules')
             self.useModules()
+
+    def configure_cxx_library_root(self, full_config):
+        self.cxx_library_root = full_config.get_lit_conf('cxx_library_root',
+                                                  full_config.libcxx_obj_root)
+        self.cxx_runtime_root = full_config.get_lit_conf('cxx_runtime_root',
+                                                   self.cxx_library_root)
+

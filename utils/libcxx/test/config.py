@@ -122,7 +122,7 @@ class Configuration(object):
         self.configure_src_root()
         self.configure_obj_root()
         self.configure_cxx_stdlib_under_test()
-        self.configure_cxx_library_root()
+        self.cxx.configure_cxx_library_root(self)
         self.configure_use_clang_verify()
         self.cxx.configure_use_thread_safety(self)
         self.configure_execute_external()
@@ -202,12 +202,6 @@ class Configuration(object):
                 self.libcxx_obj_root = possible_root
             else:
                 self.libcxx_obj_root = self.project_obj_root
-
-    def configure_cxx_library_root(self):
-        self.cxx_library_root = self.get_lit_conf('cxx_library_root',
-                                                  self.libcxx_obj_root)
-        self.cxx_runtime_root = self.get_lit_conf('cxx_runtime_root',
-                                                   self.cxx_library_root)
 
     def configure_use_system_cxx_lib(self):
         # This test suite supports testing against either the system library or
