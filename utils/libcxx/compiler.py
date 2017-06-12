@@ -63,6 +63,7 @@ def make_clang_cl(cxx_conf, full_config):
 
 class CXXCompilerInterface(object):
     def add_pp_string_flag(self, name, value=None): pass
+    def add_pp_int_flag(self, name, value=None): pass
     def print_config_info(self, full_config): pass
     def configure_use_thread_safety(self, full_config): pass
     def configure_ccache(self, full_config): pass
@@ -136,6 +137,12 @@ class CXXCompiler(CXXCompilerInterface):
             self.compile_flags += ['-D%s' % name]
         else:
             self.compile_flags += ['-D%s="%s"' % (name, value)]
+
+    def add_pp_int_flag(self, name, value=None):
+        if value is None:
+            self.compile_flags += ['-D%s' % name]
+        else:
+            self.compile_flags += ['-D%s=%s' % (name, value)]
 
     def print_config_info(self, full_config):
         full_config.lit_config.note('Using compiler: %s' % self.path)

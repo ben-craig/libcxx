@@ -396,7 +396,7 @@ class Configuration(object):
         if debug_level not in ['0', '1']:
             self.lit_config.fatal('Invalid value for debug_level "%s".'
                                   % debug_level)
-        self.cxx.compile_flags += ['-D_LIBCPP_DEBUG=%s' % debug_level]
+        self.cxx.add_pp_int_flag('_LIBCPP_DEBUG', debug_level)
 
     def configure_warnings(self):
         # Turn on warnings by default for Clang based compilers when C++ >= 11
