@@ -17,8 +17,6 @@ import shlex
 import shutil
 import sys
 
-from libcxx.compiler import make_compiler
-from libcxx.test.target_info import make_target_info
 from libcxx.test.executor import *
 from libcxx.test.tracing import *
 import libcxx.util
@@ -186,9 +184,11 @@ class Configuration(object):
         self.executor = te
 
     def configure_target_info(self):
+        from libcxx.test.target_info import make_target_info
         self.target_info = make_target_info(self)
 
     def configure_cxx(self):
+        from libcxx.compiler import make_compiler
         self.cxx = make_compiler(self)
 
     def configure_src_root(self):
