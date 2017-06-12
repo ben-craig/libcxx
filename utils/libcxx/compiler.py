@@ -71,7 +71,29 @@ def make_clang_cl(cxx_conf, full_config):
                        compile_flags=compile_flags,
                        link_flags=link_flags)
 
-class CXXCompiler(object):
+class CXXCompilerInterface(object):
+    def print_config_info(self, full_config): pass
+    def isVerifySupported(self): return False
+    def hasCompileFlag(self, flag): return False
+    def dumpMacros(self, source_files=None, flags=[], cwd=None): return {}
+    def addFlagIfSupported(self, flag): return False
+    def useCCache(self, value=True): pass
+    def useWarnings(self, value=True): pass
+    def hasWarningFlag(self, flag): return False
+    def addWarningFlagIfSupported(self, flag): return False
+    def useModules(self, value=True): pass
+    def getTriple(self): return None
+
+    def compileLinkTwoSteps(self, source_file, out=None, object_file=None,
+                            flags=[], cwd=None):
+        cmd, out, err, rc = ("", "", "", -1)
+        return cmd, out, err, rc
+
+    def compile(self, source_files, out=None, flags=[], cwd=None):
+        cmd, out, err, rc = ("", "", "", -1)
+        return cmd, out, err, rc
+
+class CXXCompiler(CXXCompilerInterface):
     CM_Default = 0
     CM_PreProcess = 1
     CM_Compile = 2
