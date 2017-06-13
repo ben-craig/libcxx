@@ -129,25 +129,11 @@ class LibcxxTestFormat(object):
         extra_modules_defines = self._get_parser('MODULES_DEFINES:',
                                                  parsers).getValue()
         if '-fmodules' in test.config.available_features:
-            test_cxx.compile_flags += [('-D%s' % mdef.strip()) for
-                                       mdef in extra_modules_defines]
-            test_cxx.addWarningFlagIfSupported('-Wno-macro-redefined')
-            # FIXME: libc++ debug tests #define _LIBCPP_ASSERT to override it
-            # If we see this we need to build the test against uniquely built
-            # modules.
-            if is_libcxx_test:
-                with open(test.getSourcePath(), 'r') as f:
-                    contents = f.read()
-                if '#define _LIBCPP_ASSERT' in contents:
-                    test_cxx.useModules(False)
+            test_cxx.add_extra_module_defines(extra_modules_defines,
+                                              test.getSourcePath())
 
         if is_objcxx_test:
-            test_cxx.source_lang = 'objective-c++'
-            if is_objcxx_arc_test:
-                test_cxx.compile_flags += ['-fobjc-arc']
-            else:
-                test_cxx.compile_flags += ['-fno-objc-arc']
-            test_cxx.link_flags += ['-framework', 'Foundation']
+            test_cxx.use_objcxx(is_objcxx_arc_test=is_objcxx_arc_test)
 
         # Dispatch the test based on its suffix.
         if is_sh_test:

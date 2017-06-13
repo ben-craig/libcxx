@@ -91,6 +91,8 @@ class CXXCompilerInterface(object):
     def configure_modules(self, full_config): pass
     def configure_cxx_library_root(self, full_config): pass
     def configure_substitutions(self, sub): pass
+    def add_extra_module_defines(self, extra_modules_defines, sourcePath): pass
+    def use_objcxx(self, is_objcxx_arc_test): pass
 
     def compileLinkTwoSteps(self, source_file, out=None, object_file=None,
                             flags=[], cwd=None):
@@ -998,3 +1000,24 @@ class CXXCompiler(CXXCompilerInterface):
         sub.append(('%compile', compile_str))
         sub.append(('%link', link_str))
         sub.append(('%build', build_str))
+
+    def add_extra_module_defines(self, extra_modules_defines, sourcePath):
+        self.compile_flags += [('-D%s' % mdef.strip()) for
+                               mdef in extra_modules_defines]
+        self.addWarningFlagIfSupported('-Wno-macro-redefined')
+        # FIXME: libc++ debug tests #define _LIBCPP_ASSERT to override it
+        # If we see this we need to build the test against uniquely built
+        # modules.
+        if is_libcxx_test:
+            with open(sourcePath, 'r') as f:
+                contents = f.read()
+            if '#define _LIBCPP_ASSERT' in contents:
+                self.useModules(False)
+
+    def use_objcxx(self, is_objcxx_arc_test):
+        self.source_lang = 'objective-c++'
+        if is_objcxx_arc_test:
+            self.compile_flags += ['-fobjc-arc']
+        else:
+            self.compile_flags += ['-fno-objc-arc']
+        self.link_flags += ['-framework', 'Foundation']
