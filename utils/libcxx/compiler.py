@@ -93,6 +93,7 @@ class CXXCompilerInterface(object):
     def configure_substitutions(self, sub): pass
     def add_extra_module_defines(self, extra_modules_defines, sourcePath): pass
     def use_objcxx(self, is_objcxx_arc_test): pass
+    def configure_for_fail_test(self, use_verify): pass
 
     def compileLinkTwoSteps(self, source_file, out=None, object_file=None,
                             flags=[], cwd=None):
@@ -1021,3 +1022,16 @@ class CXXCompiler(CXXCompilerInterface):
         else:
             self.compile_flags += ['-fno-objc-arc']
         self.link_flags += ['-framework', 'Foundation']
+
+    def configure_for_fail_test(self, use_verify):
+        # FIXME(EricWF): GCC 5 does not evaluate static assertions that
+        # are dependant on a template parameter when '-fsyntax-only' is passed.
+        # This is fixed in GCC 6. However for now we only pass "-fsyntax-only"
+        # when using Clang.
+        if self.type != 'gcc':
+            self.flags += ['-fsyntax-only']
+        if use_verify:
+            self.useVerify()
+            self.useWarnings()
+            if '-Wuser-defined-warnings' in self.warning_flags:
+                self.warning_flags += ['-Wno-error=user-defined-warnings']
