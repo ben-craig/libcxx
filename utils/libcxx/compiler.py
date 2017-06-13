@@ -64,6 +64,8 @@ def make_clang_cl(cxx_conf, full_config):
                        link_flags=link_flags)
 
 class CXXCompilerInterface(object):
+    def __init__(self):
+        self.type = None
     def add_pp_string_flag(self, name, value=None): pass
     def add_pp_int_flag(self, name, value=None): pass
     def print_config_info(self, full_config): pass
