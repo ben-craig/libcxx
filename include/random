@@ -1641,10 +1641,13 @@ class piecewise_linear_distribution
 #include <limits>
 #include <algorithm>
 #include <numeric>
+
+#if 0
 #include <vector>
 #include <string>
 #include <istream>
 #include <ostream>
+#endif
 
 #include <__undef_min_max>
 
@@ -1815,6 +1818,8 @@ struct __lce_ta<__a, __c, __m, (unsigned short)(~0), __b>
 template <class _UIntType, _UIntType __a, _UIntType __c, _UIntType __m>
 class _LIBCPP_TEMPLATE_VIS linear_congruential_engine;
 
+
+#if 0
 template <class _CharT, class _Traits,
           class _Up, _Up _Ap, _Up _Cp, _Up _Np>
 _LIBCPP_INLINE_VISIBILITY
@@ -1827,6 +1832,8 @@ template <class _CharT, class _Traits,
 basic_istream<_CharT, _Traits>&
 operator>>(basic_istream<_CharT, _Traits>& __is,
            linear_congruential_engine<_Up, _Ap, _Cp, _Np>& __x);
+#endif
+
 
 template <class _UIntType, _UIntType __a, _UIntType __c, _UIntType __m>
 class _LIBCPP_TEMPLATE_VIS linear_congruential_engine
@@ -1915,6 +1922,7 @@ private:
     template<class _Sseq>
         void __seed(_Sseq& __q, integral_constant<unsigned, 2>);
 
+#if 0
     template <class _CharT, class _Traits,
               class _Up, _Up _Ap, _Up _Cp, _Up _Np>
     friend
@@ -1928,6 +1936,7 @@ private:
     basic_istream<_CharT, _Traits>&
     operator>>(basic_istream<_CharT, _Traits>& __is,
                linear_congruential_engine<_Up, _Ap, _Cp, _Np>& __x);
+#endif
 };
 
 template <class _UIntType, _UIntType __a, _UIntType __c, _UIntType __m>
@@ -1973,6 +1982,7 @@ linear_congruential_engine<_UIntType, __a, __c, __m>::__seed(_Sseq& __q,
     __x_ = __c == 0 && __s == 0 ? result_type(1) : __s;
 }
 
+#if 0
 template <class _CharT, class _Traits,
           class _UIntType, _UIntType __a, _UIntType __c, _UIntType __m>
 inline _LIBCPP_INLINE_VISIBILITY
@@ -2000,6 +2010,8 @@ operator>>(basic_istream<_CharT, _Traits>& __is,
         __x.__x_ = __t;
     return __is;
 }
+#endif
+
 
 typedef linear_congruential_engine<uint_fast32_t, 16807, 0, 2147483647>
                                                                    minstd_rand0;
@@ -2032,6 +2044,7 @@ operator!=(const mersenne_twister_engine<_UI, _Wp, _Np, _Mp, _Rp, _Ap, _Up, _Dp,
            const mersenne_twister_engine<_UI, _Wp, _Np, _Mp, _Rp, _Ap, _Up, _Dp, _Sp,
                                          _Bp, _Tp, _Cp, _Lp, _Fp>& __y);
 
+#if 0
 template <class _CharT, class _Traits,
           class _UI, size_t _Wp, size_t _Np, size_t _Mp, size_t _Rp,
           _UI _Ap, size_t _Up, _UI _Dp, size_t _Sp,
@@ -2049,6 +2062,9 @@ basic_istream<_CharT, _Traits>&
 operator>>(basic_istream<_CharT, _Traits>& __is,
            mersenne_twister_engine<_UI, _Wp, _Np, _Mp, _Rp, _Ap, _Up, _Dp, _Sp,
                                    _Bp, _Tp, _Cp, _Lp, _Fp>& __x);
+#endif
+
+
 
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
           _UIntType __a, size_t __u, _UIntType __d, size_t __s,
@@ -2149,6 +2165,8 @@ public:
                const mersenne_twister_engine<_UI, _Wp, _Np, _Mp, _Rp, _Ap, _Up, _Dp, _Sp,
                                              _Bp, _Tp, _Cp, _Lp, _Fp>& __y);
 
+
+#if 0
     template <class _CharT, class _Traits,
               class _UI, size_t _Wp, size_t _Np, size_t _Mp, size_t _Rp,
               _UI _Ap, size_t _Up, _UI _Dp, size_t _Sp,
@@ -2168,6 +2186,8 @@ public:
     operator>>(basic_istream<_CharT, _Traits>& __is,
                mersenne_twister_engine<_UI, _Wp, _Np, _Mp, _Rp, _Ap, _Up, _Dp, _Sp,
                                        _Bp, _Tp, _Cp, _Lp, _Fp>& __x);
+
+#endif
 private:
 
     template<class _Sseq>
@@ -2225,19 +2245,19 @@ template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
           _UIntType __a, size_t __u, _UIntType __d, size_t __s,
           _UIntType __b, size_t __t, _UIntType __c, size_t __l, _UIntType __f>
-    _LIBCPP_CONSTEXPR const size_t 
+    _LIBCPP_CONSTEXPR const size_t
     mersenne_twister_engine<_UIntType, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>::state_size;
 
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
           _UIntType __a, size_t __u, _UIntType __d, size_t __s,
           _UIntType __b, size_t __t, _UIntType __c, size_t __l, _UIntType __f>
-    _LIBCPP_CONSTEXPR const size_t 
+    _LIBCPP_CONSTEXPR const size_t
     mersenne_twister_engine<_UIntType, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>::shift_size;
 
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
           _UIntType __a, size_t __u, _UIntType __d, size_t __s,
           _UIntType __b, size_t __t, _UIntType __c, size_t __l, _UIntType __f>
-    _LIBCPP_CONSTEXPR const size_t 
+    _LIBCPP_CONSTEXPR const size_t
     mersenne_twister_engine<_UIntType, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>::mask_bits;
 
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
@@ -2249,7 +2269,7 @@ template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
           _UIntType __a, size_t __u, _UIntType __d, size_t __s,
           _UIntType __b, size_t __t, _UIntType __c, size_t __l, _UIntType __f>
-    _LIBCPP_CONSTEXPR const size_t 
+    _LIBCPP_CONSTEXPR const size_t
     mersenne_twister_engine<_UIntType, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>::tempering_u;
 
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
@@ -2261,7 +2281,7 @@ template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
           _UIntType __a, size_t __u, _UIntType __d, size_t __s,
           _UIntType __b, size_t __t, _UIntType __c, size_t __l, _UIntType __f>
-    _LIBCPP_CONSTEXPR const size_t 
+    _LIBCPP_CONSTEXPR const size_t
     mersenne_twister_engine<_UIntType, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>::tempering_s;
 
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
@@ -2273,7 +2293,7 @@ template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
           _UIntType __a, size_t __u, _UIntType __d, size_t __s,
           _UIntType __b, size_t __t, _UIntType __c, size_t __l, _UIntType __f>
-    _LIBCPP_CONSTEXPR const size_t 
+    _LIBCPP_CONSTEXPR const size_t
     mersenne_twister_engine<_UIntType, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>::tempering_t;
 
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
@@ -2285,7 +2305,7 @@ template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
           _UIntType __a, size_t __u, _UIntType __d, size_t __s,
           _UIntType __b, size_t __t, _UIntType __c, size_t __l, _UIntType __f>
-    _LIBCPP_CONSTEXPR const size_t 
+    _LIBCPP_CONSTEXPR const size_t
     mersenne_twister_engine<_UIntType, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>::tempering_l;
 
 template <class _UIntType, size_t __w, size_t __n, size_t __m, size_t __r,
@@ -2441,6 +2461,8 @@ operator!=(const mersenne_twister_engine<_UI, _Wp, _Np, _Mp, _Rp, _Ap, _Up, _Dp,
     return !(__x == __y);
 }
 
+
+#if 0
 template <class _CharT, class _Traits,
           class _UI, size_t _Wp, size_t _Np, size_t _Mp, size_t _Rp,
           _UI _Ap, size_t _Up, _UI _Dp, size_t _Sp,
@@ -2484,6 +2506,8 @@ operator>>(basic_istream<_CharT, _Traits>& __is,
     }
     return __is;
 }
+#endif
+
 
 typedef mersenne_twister_engine<uint_fast32_t, 32, 624, 397, 31,
                                 0x9908b0df, 11, 0xffffffff,
@@ -2514,6 +2538,8 @@ operator!=(
     const subtract_with_carry_engine<_UI, _Wp, _Sp, _Rp>& __x,
     const subtract_with_carry_engine<_UI, _Wp, _Sp, _Rp>& __y);
 
+
+#if 0
 template <class _CharT, class _Traits,
           class _UI, size_t _Wp, size_t _Sp, size_t _Rp>
 basic_ostream<_CharT, _Traits>&
@@ -2525,6 +2551,9 @@ template <class _CharT, class _Traits,
 basic_istream<_CharT, _Traits>&
 operator>>(basic_istream<_CharT, _Traits>& __is,
            subtract_with_carry_engine<_UI, _Wp, _Sp, _Rp>& __x);
+#endif
+
+
 
 template<class _UIntType, size_t __w, size_t __s, size_t __r>
 class _LIBCPP_TEMPLATE_VIS subtract_with_carry_engine
@@ -2600,6 +2629,7 @@ public:
         const subtract_with_carry_engine<_UI, _Wp, _Sp, _Rp>& __x,
         const subtract_with_carry_engine<_UI, _Wp, _Sp, _Rp>& __y);
 
+#if 0
     template <class _CharT, class _Traits,
               class _UI, size_t _Wp, size_t _Sp, size_t _Rp>
     friend
@@ -2613,6 +2643,7 @@ public:
     basic_istream<_CharT, _Traits>&
     operator>>(basic_istream<_CharT, _Traits>& __is,
                subtract_with_carry_engine<_UI, _Wp, _Sp, _Rp>& __x);
+#endif
 
 private:
 
@@ -2764,6 +2795,7 @@ operator!=(
     return !(__x == __y);
 }
 
+#if 0
 template <class _CharT, class _Traits,
           class _UI, size_t _Wp, size_t _Sp, size_t _Rp>
 basic_ostream<_CharT, _Traits>&
@@ -2803,6 +2835,8 @@ operator>>(basic_istream<_CharT, _Traits>& __is,
     }
     return __is;
 }
+#endif
+
 
 typedef subtract_with_carry_engine<uint_fast32_t, 24, 10, 24>     ranlux24_base;
 typedef subtract_with_carry_engine<uint_fast64_t, 48,  5, 12>     ranlux48_base;
@@ -2894,6 +2928,7 @@ public:
         const discard_block_engine<_Eng, _Pp, _Rp>& __x,
         const discard_block_engine<_Eng, _Pp, _Rp>& __y);
 
+#if 0
     template <class _CharT, class _Traits,
               class _Eng, size_t _Pp, size_t _Rp>
     friend
@@ -2907,6 +2942,7 @@ public:
     basic_istream<_CharT, _Traits>&
     operator>>(basic_istream<_CharT, _Traits>& __is,
                discard_block_engine<_Eng, _Pp, _Rp>& __x);
+#endif
 };
 
 template<class _Engine, size_t __p, size_t __r>
@@ -2946,6 +2982,7 @@ operator!=(const discard_block_engine<_Eng, _Pp, _Rp>& __x,
     return !(__x == __y);
 }
 
+#if 0
 template <class _CharT, class _Traits,
           class _Eng, size_t _Pp, size_t _Rp>
 basic_ostream<_CharT, _Traits>&
@@ -2977,6 +3014,8 @@ operator>>(basic_istream<_CharT, _Traits>& __is,
     }
     return __is;
 }
+#endif
+
 
 typedef discard_block_engine<ranlux24_base, 223, 23> ranlux24;
 typedef discard_block_engine<ranlux48_base, 389, 11> ranlux48;
@@ -3105,6 +3144,8 @@ public:
         const independent_bits_engine<_Eng, _Wp, _UI>& __x,
         const independent_bits_engine<_Eng, _Wp, _UI>& __y);
 
+
+#if 0
     template <class _CharT, class _Traits,
               class _Eng, size_t _Wp, class _UI>
     friend
@@ -3118,6 +3159,9 @@ public:
     basic_istream<_CharT, _Traits>&
     operator>>(basic_istream<_CharT, _Traits>& __is,
                independent_bits_engine<_Eng, _Wp, _UI>& __x);
+#endif
+
+
 
 private:
     _LIBCPP_INLINE_VISIBILITY
@@ -3199,6 +3243,8 @@ operator!=(
     return !(__x == __y);
 }
 
+
+#if 0
 template <class _CharT, class _Traits,
           class _Eng, size_t _Wp, class _UI>
 basic_ostream<_CharT, _Traits>&
@@ -3220,6 +3266,8 @@ operator>>(basic_istream<_CharT, _Traits>& __is,
         __x.__e_ = __e;
     return __is;
 }
+#endif
+
 
 // shuffle_order_engine
 
@@ -3336,6 +3384,8 @@ private:
         const shuffle_order_engine<_Eng, _Kp>& __x,
         const shuffle_order_engine<_Eng, _Kp>& __y);
 
+
+#if 0
     template <class _CharT, class _Traits,
               class _Eng, size_t _Kp>
     friend
@@ -3349,6 +3399,8 @@ private:
     basic_istream<_CharT, _Traits>&
     operator>>(basic_istream<_CharT, _Traits>& __is,
                shuffle_order_engine<_Eng, _Kp>& __x);
+#endif
+
 
     _LIBCPP_INLINE_VISIBILITY
     void __init()
@@ -3431,6 +3483,7 @@ operator!=(
     return !(__x == __y);
 }
 
+#if 0
 template <class _CharT, class _Traits,
           class _Eng, size_t _Kp>
 basic_ostream<_CharT, _Traits>&
@@ -3470,9 +3523,15 @@ operator>>(basic_istream<_CharT, _Traits>& __is,
     }
     return __is;
 }
+#endif
+
+
+
 
 typedef shuffle_order_engine<minstd_rand0, 256>                         knuth_b;
 
+
+#if 0
 // random_device
 
 class _LIBCPP_TYPE_VIS random_device
@@ -3628,9 +3687,10 @@ seed_seq::generate(_RandomAccessIterator __first, _RandomAccessIterator __last)
         }
     }
 }
+#endif
 
 // generate_canonical
-
+#if 0
 template<class _RealType, size_t __bits, class _URNG>
 _RealType
 generate_canonical(_URNG& __g)
@@ -3650,11 +3710,12 @@ generate_canonical(_URNG& __g)
         _Sp += (__g() - _URNG::min()) * __base;
     return _Sp / __base;
 }
-
+#endif
 // uniform_int_distribution
 
 // in <algorithm>
 
+#if 0
 template <class _CharT, class _Traits, class _IT>
 basic_ostream<_CharT, _Traits>&
 operator<<(basic_ostream<_CharT, _Traits>& __os,
@@ -3684,9 +3745,10 @@ operator>>(basic_istream<_CharT, _Traits>& __is,
         __x.param(param_type(__a, __b));
     return __is;
 }
-
+#endif
 // uniform_real_distribution
 
+#if 0
 template<class _RealType = double>
 class _LIBCPP_TEMPLATE_VIS uniform_real_distribution
 {
@@ -6410,7 +6472,7 @@ public:
             param_type(size_t __nw, result_type __xmin, result_type __xmax,
                        _UnaryOperation __fw);
         param_type & operator=(const param_type& __rhs);
-        
+
         _LIBCPP_INLINE_VISIBILITY
         vector<result_type> intervals() const {return __b_;}
         _LIBCPP_INLINE_VISIBILITY
@@ -6719,6 +6781,7 @@ operator>>(basic_istream<_CharT, _Traits>& __is,
     }
     return __is;
 }
+#endif
 
 _LIBCPP_END_NAMESPACE_STD
 
