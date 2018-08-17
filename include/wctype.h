@@ -51,7 +51,7 @@ wctrans_t wctrans(const char* property);
 #pragma GCC system_header
 #endif
 
-#include_next <wctype.h>
+//#include <../../km/crt/wctype.h>
 
 #ifdef __cplusplus
 

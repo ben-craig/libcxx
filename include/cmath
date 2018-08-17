@@ -309,7 +309,7 @@ long double    truncl(long double x);
 #endif
 
 _LIBCPP_BEGIN_NAMESPACE_STD
-
+#if 0
 using ::signbit;
 using ::fpclassify;
 using ::isfinite;
@@ -326,11 +326,13 @@ using ::isunordered;
 
 using ::float_t;
 using ::double_t;
+#endif
 
 #ifndef _AIX
 using ::abs;
 #endif
 
+#if 0
 using ::acos;
 using ::acosf;
 using ::asin;
@@ -611,7 +613,7 @@ __libcpp_isfinite(_A1 __lcpp_x) _NOEXCEPT
 {
     return isfinite(__lcpp_x);
 }
-
+#endif
 _LIBCPP_END_NAMESPACE_STD
 
 #endif  // _LIBCPP_CMATH

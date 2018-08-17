@@ -98,16 +98,16 @@ void perror(const char* s);
 
 #include <__config>
 #include <stdio.h>
-#if defined(_LIBCPP_MSVCRT)
-#include <crtversion.h>
-#endif
+//#if defined(_LIBCPP_MSVCRT)
+//#include <crtversion.h>
+//#endif
 
 #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
 #pragma GCC system_header
 #endif
 
 _LIBCPP_BEGIN_NAMESPACE_STD
-
+#if 0
 using ::FILE;
 using ::fpos_t;
 using ::size_t;
@@ -170,7 +170,7 @@ using ::putchar;
 using ::puts;
 using ::vprintf;
 #endif
-
+#endif
 _LIBCPP_END_NAMESPACE_STD
 
 #endif  // _LIBCPP_CSTDIO

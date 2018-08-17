@@ -43,7 +43,7 @@ int toupper(int c);
 #endif
 
 _LIBCPP_BEGIN_NAMESPACE_STD
-
+#if 0
 #ifdef isalnum
 #undef isalnum
 #endif
@@ -115,7 +115,7 @@ using ::isupper;
 using ::isxdigit;
 using ::tolower;
 using ::toupper;
-
+#endif
 _LIBCPP_END_NAMESPACE_STD
 
 #endif  // _LIBCPP_CCTYPE

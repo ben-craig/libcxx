@@ -10,7 +10,7 @@
 
 #ifndef _LIBCPP_SUPPORT_WIN32_LOCALE_WIN32_H
 #define _LIBCPP_SUPPORT_WIN32_LOCALE_WIN32_H
-
+#if 0
 #include <crtversion.h>
 
 #if _VC_CRT_MAJOR_VERSION < 14
@@ -111,4 +111,6 @@ inline int isblank( int c, locale_t /*loc*/ )
 inline int iswblank( wint_t c, locale_t /*loc*/ )
 { return ( c == L' ' || c == L'\t' ); }
 #endif // _LIBCPP_MSVCRT
+
+#endif
 #endif // _LIBCPP_SUPPORT_WIN32_LOCALE_WIN32_H
