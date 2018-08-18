@@ -467,16 +467,23 @@ basic_string<char32_t> operator "" s( const char32_t *str, size_t len ); // C++1
 */
 
 #include <__config>
+#include <__string>
 #include <string_view>
+#if 0
 #include <iosfwd>
+#endif
 #include <cstring>
+#if 0
 #include <cstdio>  // For EOF.
+#endif
 #include <cwchar>
 #include <algorithm>
 #include <iterator>
 #include <utility>
 #include <memory>
+#if 0
 #include <stdexcept>
+#endif
 #include <type_traits>
 #include <initializer_list>
 #include <__functional_base>
@@ -495,7 +502,7 @@ basic_string<char32_t> operator "" s( const char32_t *str, size_t len ); // C++1
 _LIBCPP_BEGIN_NAMESPACE_STD
 
 // fpos
-
+#if 0
 template <class _StateT>
 class _LIBCPP_TEMPLATE_VIS fpos
 {
@@ -3994,7 +4001,7 @@ inline namespace literals
 _LIBCPP_EXTERN_TEMPLATE(class _LIBCPP_EXTERN_TEMPLATE_TYPE_VIS basic_string<char>)
 _LIBCPP_EXTERN_TEMPLATE(class _LIBCPP_EXTERN_TEMPLATE_TYPE_VIS basic_string<wchar_t>)
 _LIBCPP_EXTERN_TEMPLATE(string operator+<char, char_traits<char>, allocator<char> >(char const*, string const&))
-
+#endif
 _LIBCPP_END_NAMESPACE_STD
 
 #endif  // _LIBCPP_STRING

@@ -112,9 +112,11 @@ size_t wcsrtombs(char* restrict dst, const wchar_t** restrict src, size_t len,
 #endif
 
 _LIBCPP_BEGIN_NAMESPACE_STD
-
+#if 0
 using ::mbstate_t;
+#endif
 using ::size_t;
+#if 0
 using ::tm;
 using ::wint_t;
 using ::FILE;
@@ -145,6 +147,7 @@ using ::wcstoul;
 #ifndef _LIBCPP_HAS_NO_LONG_LONG
 using ::wcstoull;
 #endif // _LIBCPP_HAS_NO_LONG_LONG
+
 using ::wcscpy;
 using ::wcsncpy;
 using ::wcscat;
@@ -187,7 +190,27 @@ using ::putwchar;
 using ::vwprintf;
 using ::wprintf;
 #endif
-
+#else
+using ::wcscpy;
+using ::wcsncpy;
+using ::wmemcpy;
+using ::wmemmove;
+using ::wcscat;
+using ::wcsncat;
+using ::wcscmp;
+using ::wcsncmp;
+using ::wmemcmp;
+using ::wcschr;
+using ::wcscspn;
+using ::wcspbrk;
+using ::wcsrchr;
+using ::wcsspn;
+using ::wcsstr;
+using ::wcstok;
+using ::wmemchr;
+using ::wcslen;
+using ::wmemset;
+#endif
 _LIBCPP_END_NAMESPACE_STD
 
 #endif  // _LIBCPP_CWCHAR

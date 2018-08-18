@@ -51,6 +51,7 @@ wctrans_t wctrans(const char* property);
 */
 
 #include <__config>
+#if 0
 #include <cctype>
 #include <wctype.h>
 
@@ -83,5 +84,5 @@ using ::towctrans;
 using ::wctrans;
 
 _LIBCPP_END_NAMESPACE_STD
-
+#endif
 #endif  // _LIBCPP_CWCTYPE
