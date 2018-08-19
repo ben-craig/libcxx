@@ -243,12 +243,13 @@ int main()
 
     // WCHAR_MAX
     assert(WCHAR_MAX == std::numeric_limits<wchar_t>::max());
-
+#if 0
     // WINT_MIN
     assert(WINT_MIN == std::numeric_limits<std::wint_t>::min());
 
     // WINT_MAX
     assert(WINT_MAX == std::numeric_limits<std::wint_t>::max());
+#endif
 
 #ifndef INT8_C
 #error INT8_C not defined
