@@ -50,9 +50,11 @@ int main()
     test<__int128_t>(0);
     test<__uint128_t>(0);
 #endif
+#if 0
     test<float>(1.f/zero);
     test<double>(1./zero);
     test<long double>(1./zero);
+#endif
 }
 
 float zero = 0;

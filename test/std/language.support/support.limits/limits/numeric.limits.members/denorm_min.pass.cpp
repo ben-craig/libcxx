@@ -48,6 +48,7 @@ int main()
     test<__int128_t>(0);
     test<__uint128_t>(0);
 #endif
+#if 0
 #if defined(__FLT_DENORM_MIN__) // guarded because these macros are extensions.
     test<float>(__FLT_DENORM_MIN__);
     test<double>(__DBL_DENORM_MIN__);
@@ -60,5 +61,6 @@ int main()
 #endif
 #if !defined(__FLT_DENORM_MIN__) && !defined(FLT_TRUE_MIN)
 #error Test has no expected values for floating point types
+#endif
 #endif
 }

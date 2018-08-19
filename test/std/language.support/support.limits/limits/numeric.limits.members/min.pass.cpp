@@ -54,7 +54,9 @@ int main()
     test<__int128_t>(-__int128_t(__uint128_t(-1)/2) - 1);
     test<__uint128_t>(0);
 #endif
+#if 0
     test<float>(FLT_MIN);
     test<double>(DBL_MIN);
     test<long double>(LDBL_MIN);
+#endif
 }

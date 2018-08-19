@@ -15,7 +15,7 @@
 #include <cmath>
 #include <type_traits>
 #include <cassert>
-
+#if 0
 template <class T>
 void
 test_imp(std::true_type)
@@ -25,7 +25,7 @@ test_imp(std::true_type)
     assert(std::isnan(std::numeric_limits<volatile T>::signaling_NaN()));
     assert(std::isnan(std::numeric_limits<const volatile T>::signaling_NaN()));
 }
-
+#endif
 template <class T>
 void
 test_imp(std::false_type)
@@ -67,7 +67,9 @@ int main()
     test<__int128_t>();
     test<__uint128_t>();
 #endif
+#if 0
     test<float>();
     test<double>();
     test<long double>();
+#endif
 }

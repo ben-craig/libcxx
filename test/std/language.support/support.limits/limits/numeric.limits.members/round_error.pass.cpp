@@ -48,7 +48,9 @@ int main()
     test<__int128_t>(0);
     test<__uint128_t>(0);
 #endif
+#if 0
     test<float>(0.5);
     test<double>(0.5);
     test<long double>(0.5);
+#endif
 }

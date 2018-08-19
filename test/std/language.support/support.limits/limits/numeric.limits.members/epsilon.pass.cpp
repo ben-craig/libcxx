@@ -48,7 +48,9 @@ int main()
     test<__int128_t>(0);
     test<__uint128_t>(0);
 #endif
+#if 0
     test<float>(FLT_EPSILON);
     test<double>(DBL_EPSILON);
     test<long double>(LDBL_EPSILON);
+#endif
 }

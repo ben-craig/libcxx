@@ -25,7 +25,9 @@
 // More convenient to test it here.
 
 #include <limits>
+#if 0
 #include <complex>
+#endif
 
 template <class T>
 void test()
@@ -63,9 +65,11 @@ int main()
     test<__int128_t>();
     test<__uint128_t>();
 #endif
+#if 0
     test<float>();
     test<double>();
     test<long double>();
     static_assert(!std::numeric_limits<std::complex<double> >::is_specialized,
                  "!std::numeric_limits<std::complex<double> >::is_specialized");
+#endif
 }
