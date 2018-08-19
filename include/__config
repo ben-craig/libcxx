@@ -336,7 +336,7 @@ typedef __char32_t char32_t;
 #endif
 
 #if !(__has_feature(cxx_constexpr))
-#define _LIBCPP_HAS_NO_CONSTEXPR
+//#define _LIBCPP_HAS_NO_CONSTEXPR
 #endif
 
 #if !(__has_feature(cxx_relaxed_constexpr))
@@ -344,7 +344,7 @@ typedef __char32_t char32_t;
 #endif
 
 #if !(__has_feature(cxx_variable_templates))
-#define _LIBCPP_HAS_NO_VARIABLE_TEMPLATES
+//#define _LIBCPP_HAS_NO_VARIABLE_TEMPLATES
 #endif
 
 #if __ISO_C_VISIBLE >= 2011 || __cplusplus >= 201103L
@@ -423,10 +423,10 @@ namespace std {
 
 // constexpr was added to GCC in 4.6.
 #if _GNUC_VER < 406
-#define _LIBCPP_HAS_NO_CONSTEXPR
+//#define _LIBCPP_HAS_NO_CONSTEXPR
 // Can only use constexpr in c++11 mode.
 #elif !defined(__GXX_EXPERIMENTAL_CXX0X__) && __cplusplus < 201103L
-#define _LIBCPP_HAS_NO_CONSTEXPR
+//#define _LIBCPP_HAS_NO_CONSTEXPR
 #endif
 
 // Determine if GCC supports relaxed constexpr
@@ -436,7 +436,7 @@ namespace std {
 
 // GCC 5 will support variable templates
 #if !defined(__cpp_variable_templates) || __cpp_variable_templates < 201304L
-#define _LIBCPP_HAS_NO_VARIABLE_TEMPLATES
+//#define _LIBCPP_HAS_NO_VARIABLE_TEMPLATES
 #endif
 
 #ifndef __GXX_EXPERIMENTAL_CXX0X__
@@ -494,13 +494,13 @@ using namespace _LIBCPP_NAMESPACE __attribute__((__strong__));
 #endif
 
 #define _LIBCPP_HAS_IS_BASE_OF
-#define _LIBCPP_HAS_NO_CONSTEXPR
-#define _LIBCPP_HAS_NO_CXX14_CONSTEXPR
-#define _LIBCPP_HAS_NO_VARIABLE_TEMPLATES
+//#define _LIBCPP_HAS_NO_CONSTEXPR
+//#define _LIBCPP_HAS_NO_CXX14_CONSTEXPR
+//#define _LIBCPP_HAS_NO_VARIABLE_TEMPLATES
 #if _MSC_VER <= 1800
-#define _LIBCPP_HAS_NO_UNICODE_CHARS
+//#define _LIBCPP_HAS_NO_UNICODE_CHARS
 #endif
-#define _LIBCPP_HAS_NO_NOEXCEPT
+//#define _LIBCPP_HAS_NO_NOEXCEPT
 #define __alignof__ __alignof
 #define _LIBCPP_NORETURN __declspec(noreturn)
 #define _ALIGNAS(x) __declspec(align(x))
@@ -744,7 +744,7 @@ template <unsigned> struct __static_assert_check {};
 #endif
 #endif
 
-#ifdef _LIBCPP_HAS_NO_CONSTEXPR
+#if 0 //def _LIBCPP_HAS_NO_CONSTEXPR
 #define _LIBCPP_CONSTEXPR
 #else
 #define _LIBCPP_CONSTEXPR constexpr
@@ -840,7 +840,7 @@ template <unsigned> struct __static_assert_check {};
 #endif
 
 #ifndef _LIBCPP_STD_VER
-#  if  1 //__cplusplus <= 201103L
+#  if  0 //__cplusplus <= 201103L
 #    define _LIBCPP_STD_VER 11
 #  elif 0 //__cplusplus <= 201402L
 #    define _LIBCPP_STD_VER 14

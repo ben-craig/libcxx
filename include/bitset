@@ -256,7 +256,7 @@ inline
 _LIBCPP_CONSTEXPR
 __bitset<_N_words, _Size>::__bitset(unsigned long long __v) _NOEXCEPT
 #ifndef _LIBCPP_HAS_NO_CONSTEXPR
-#if __SIZEOF_SIZE_T__ == 8
+#if 1 //__SIZEOF_SIZE_T__ == 8
     : __first_{__v}
 #elif __SIZEOF_SIZE_T__ == 4
     : __first_{static_cast<__storage_type>(__v), static_cast<__storage_type>(__v >> __bits_per_word)}

@@ -24,9 +24,12 @@
 int main()
 {
     {
-        typedef std::pair<std::unique_ptr<int>, short> P;
-        P p(std::unique_ptr<int>(new int(3)), static_cast<short>(4));
-        std::unique_ptr<int> ptr = std::get<0>(std::move(p));
+        int value = 3;
+        auto nop_deleter = [](auto *){};
+        typedef std::unique_ptr<int, decltype(nop_deleter)> my_ptr;
+        typedef std::pair<my_ptr, short> P;
+        P p(my_ptr(&value, nop_deleter), static_cast<short>(4));
+        my_ptr ptr = std::get<0>(std::move(p));
         assert(*ptr == 3);
     }
 }

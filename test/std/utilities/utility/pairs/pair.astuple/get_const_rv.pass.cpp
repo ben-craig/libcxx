@@ -27,11 +27,15 @@
 int main()
 {
     {
-    typedef std::pair<std::unique_ptr<int>, short> P;
-    const P p(std::unique_ptr<int>(new int(3)), static_cast<short>(4));
-    static_assert(std::is_same<const std::unique_ptr<int>&&, decltype(std::get<0>(std::move(p)))>::value, "");
+    int value = 3;
+    auto nop_deleter = [](auto *){};
+    typedef std::unique_ptr<int, decltype(nop_deleter)> my_ptr;
+    typedef std::pair<my_ptr, short> P;
+
+    const P p(my_ptr(&value, nop_deleter), static_cast<short>(4));
+    static_assert(std::is_same<const std::unique_ptr<int, decltype(nop_deleter)>&&, decltype(std::get<0>(std::move(p)))>::value, "");
     static_assert(noexcept(std::get<0>(std::move(p))), "");
-    const std::unique_ptr<int>&& ptr = std::get<0>(std::move(p));
+    const std::unique_ptr<int, decltype(nop_deleter)>&& ptr = std::get<0>(std::move(p));
     assert(*ptr == 3);
     }
 
