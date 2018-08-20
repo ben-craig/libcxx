@@ -30,6 +30,7 @@ extern Incomplete inc_obj;
 
 int main()
 {
+    #if 0
     {
     // Test that we don't constrain the assignment operator in C++03 mode.
     // Since we don't have access control SFINAE having pair evaluate SFINAE
@@ -43,6 +44,7 @@ int main()
     P p(42, inc_obj);
     assert(&p.second == &inc_obj);
     }
+    #endif
 }
 
 struct Incomplete {};

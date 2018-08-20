@@ -17,10 +17,12 @@
 #error va_arg not defined
 #endif
 
+#if 0
 #if TEST_STD_VER >= 11
 #  ifndef va_copy
 #    error va_copy is not defined when c++ >= 11
 #  endif
+#endif
 #endif
 
 #ifndef va_end

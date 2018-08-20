@@ -12,14 +12,20 @@
 #include <utility>
 #include <string>
 #include <type_traits>
-#include <complex>
+//#include <complex>
 #include <memory>
 
 #include <cassert>
 
+struct complex_ll {
+    long long r, i;
+    long long real() const {return r;}
+    long long imag() const {return i;}
+};
+
 int main()
 {
-    typedef std::complex<float> cf;
+    typedef complex_ll cf;
     {
     auto t1 = std::make_pair<int, cf> ( 42, { 1,2 } );
     assert ( std::get<int>(t1) == 42 );
@@ -36,16 +42,22 @@ int main()
     }
 
     {
-    typedef std::unique_ptr<int> upint;
-    std::pair<upint, int> t(upint(new int(4)), 42);
+    int value = 4;
+    auto nop_deleter = [](auto *){};
+    typedef std::unique_ptr<int, decltype(nop_deleter)> upint;
+
+    std::pair<upint, int> t(upint(&value, nop_deleter), 42);
     upint p = std::get<upint>(std::move(t)); // get rvalue
     assert(*p == 4);
     assert(std::get<upint>(t) == nullptr); // has been moved from
     }
 
     {
-    typedef std::unique_ptr<int> upint;
-    const std::pair<upint, int> t(upint(new int(4)), 42);
+    int value = 4;
+    auto nop_deleter = [](auto *){};
+    typedef std::unique_ptr<int, decltype(nop_deleter)> upint;
+
+    const std::pair<upint, int> t(upint(&value, nop_deleter), 42);
     static_assert(std::is_same<const upint&&, decltype(std::get<upint>(std::move(t)))>::value, "");
     static_assert(noexcept(std::get<upint>(std::move(t))), "");
     static_assert(std::is_same<const int&&, decltype(std::get<int>(std::move(t)))>::value, "");
