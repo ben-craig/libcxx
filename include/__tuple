@@ -428,7 +428,7 @@ struct __tuple_sfinae_base {
 	  enable_if<
 		is_constructible<_LArgs, _RArgs>::value,
 		true_type
-	  >::value... > {};
+	  >::type::value... > {};
 
   template <class _FromArgs, class _ToArgs> struct __convertible;
   template <class ..._LArgs, class ..._RArgs>
@@ -436,7 +436,7 @@ struct __tuple_sfinae_base {
 	  enable_if<
 		is_convertible<_LArgs, _RArgs>::value,
 		true_type
-	  >::value... > {};
+	  >::type::value... > {};
 
   template <class _FromArgs, class _ToArgs> struct __assignable;
   template <class ..._LArgs, class ..._RArgs>
@@ -444,7 +444,7 @@ struct __tuple_sfinae_base {
 	  enable_if<
 		is_assignable<_LArgs, _RArgs>::value,
 		true_type
-	  >::value... > {};
+	  >::type::value... > {};
 #if 0
   template <class _FromArgs, class _ToArgs>
   using __constructible = decltype(__do_test<is_constructible>(_ToArgs{}, _FromArgs{}));
