@@ -628,12 +628,14 @@ public:
     constexpr optional(_Up&& __v)
         : __base(in_place, _VSTD::forward<_Up>(__v)) {}
 
+#if 0 //goodbye explicit
     template <class _Up, enable_if_t<
         _CheckOptionalArgsCtor<_Up>::template __enable_explicit<_Up>()
     , int> = 0>
     _LIBCPP_INLINE_VISIBILITY
     constexpr explicit optional(_Up&& __v)
         : __base(in_place, _VSTD::forward<_Up>(__v)) {}
+#endif
 
     // LWG2756: conditionally explicit conversion from const optional<_Up>&
     template <class _Up, enable_if_t<
@@ -644,6 +646,8 @@ public:
     {
         this->__construct_from(__v);
     }
+    
+#if 0 // goodbye explicit
     template <class _Up, enable_if_t<
         _CheckOptionalLikeCtor<_Up, _Up const&>::template __enable_explicit<_Up>()
     , int> = 0>
@@ -652,6 +656,7 @@ public:
     {
         this->__construct_from(__v);
     }
+#endif
 
     // LWG2756: conditionally explicit conversion from optional<_Up>&&
     template <class _Up, enable_if_t<
@@ -662,6 +667,8 @@ public:
     {
         this->__construct_from(_VSTD::move(__v));
     }
+    
+#if 0 //goodbye explicit
     template <class _Up, enable_if_t<
         _CheckOptionalLikeCtor<_Up, _Up &&>::template __enable_explicit<_Up>()
     , int> = 0>
@@ -670,6 +677,7 @@ public:
     {
         this->__construct_from(_VSTD::move(__v));
     }
+#endif
 
     _LIBCPP_INLINE_VISIBILITY
     optional& operator=(nullopt_t) noexcept
