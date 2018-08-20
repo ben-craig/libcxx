@@ -57,15 +57,15 @@
 
 /* Make a nice name for the standard version */
 #ifndef TEST_STD_VER
-#if  __cplusplus <= 199711L
-# define TEST_STD_VER 3
-#elif __cplusplus <= 201103L
-# define TEST_STD_VER 11
-#elif __cplusplus <= 201402L
-# define TEST_STD_VER 14
-#else
+//#if  __cplusplus <= 199711L
+//# define TEST_STD_VER 3
+//#elif __cplusplus <= 201103L
+//# define TEST_STD_VER 11
+//#elif __cplusplus <= 201402L
+//# define TEST_STD_VER 14
+//#else
 # define TEST_STD_VER 16    // current year; greater than current standard
-#endif
+//#endif
 #endif
 
 // Attempt to deduce GCC version
