@@ -488,6 +488,7 @@ using namespace _LIBCPP_NAMESPACE __attribute__((__strong__));
 #define _LIBCPP_TOSTRING2(x) #x
 #define _LIBCPP_TOSTRING(x) _LIBCPP_TOSTRING2(x)
 #define _LIBCPP_WARNING(x) __pragma(message(__FILE__ "(" _LIBCPP_TOSTRING(__LINE__) ") : warning note: " x))
+#define _LIBCPP_UNDERLYING_TYPE(T) __underlying_type(T)
 
 #if _MSC_VER < 1900
 #error "MSVC versions prior to Visual Studio 2015 are not supported"
