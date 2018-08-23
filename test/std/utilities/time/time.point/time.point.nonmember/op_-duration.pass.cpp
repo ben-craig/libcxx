@@ -33,6 +33,7 @@ void test2739()  // LWG2739
 
 int main()
 {
+    #if 0
     typedef std::chrono::system_clock Clock;
     typedef std::chrono::milliseconds Duration1;
     typedef std::chrono::microseconds Duration2;
@@ -50,4 +51,5 @@ int main()
 #endif
     test2739<int32_t>();
     test2739<uint32_t>();
+    #endif
 }

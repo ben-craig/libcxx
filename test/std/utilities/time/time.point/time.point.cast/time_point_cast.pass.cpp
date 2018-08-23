@@ -63,8 +63,8 @@ int main()
     test(std::chrono::milliseconds(7265000), std::chrono::milliseconds(7265000));
     test(std::chrono::milliseconds(7265000), std::chrono::microseconds(7265000000LL));
     test(std::chrono::milliseconds(7265000), std::chrono::nanoseconds(7265000000000LL));
-    test(std::chrono::milliseconds(7265000),
-         std::chrono::duration<double, std::ratio<3600> >(7265./3600));
+//    test(std::chrono::milliseconds(7265000),
+//         std::chrono::duration<double, std::ratio<3600> >(7265./3600));
     test(std::chrono::duration<int, std::ratio<2, 3> >(9),
          std::chrono::duration<int, std::ratio<3, 5> >(10));
 #if TEST_STD_VER > 11
