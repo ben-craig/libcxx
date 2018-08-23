@@ -16,7 +16,7 @@
 
 struct A
 {
-    double data_;
+    long long data_;
 };
 
 template <class F>

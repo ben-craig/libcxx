@@ -64,7 +64,9 @@ test()
 
 int main()
 {
+    #if 0
     test<float>();
     test<double>();
     test<long double>();
+    #endif
 }

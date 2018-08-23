@@ -1,7 +1,7 @@
 #ifndef POINTER_COMPARISON_TEST_HELPER_HPP
 #define POINTER_COMPARISON_TEST_HELPER_HPP
 
-#include <vector>
+#include <array>
 #include <memory>
 #include <cstdint>
 #include <cassert>
@@ -17,17 +17,17 @@ void do_pointer_comparison_test() {
 #else
     typedef Compare VoidCompare;
 #endif
-    std::vector<std::shared_ptr<T> > pointers;
     const std::size_t test_size = 100;
+    std::array<T, test_size> pointers;
     for (size_t i=0; i < test_size; ++i)
-        pointers.push_back(std::shared_ptr<T>(new T()));
+        pointers[i] = T();
     Compare comp;
     UIntCompare ucomp;
     VoidCompare vcomp;
     for (size_t i=0; i < test_size; ++i) {
         for (size_t j=0; j < test_size; ++j) {
-            T* lhs = pointers[i].get();
-            T* rhs = pointers[j].get();
+            T* lhs = &pointers[i];
+            T* rhs = &pointers[j];
             std::uintptr_t lhs_uint = reinterpret_cast<std::uintptr_t>(lhs);
             std::uintptr_t rhs_uint = reinterpret_cast<std::uintptr_t>(rhs);
             assert(comp(lhs, rhs) == ucomp(lhs_uint, rhs_uint));

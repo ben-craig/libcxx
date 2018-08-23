@@ -19,7 +19,7 @@ struct A
 {
     char test0() volatile {return 'a';}
     char test1(int) volatile {return 'b';}
-    char test2(int, double) volatile {return 'c';}
+    char test2(int, long long) volatile {return 'c';}
 };
 
 template <class F>
@@ -62,11 +62,11 @@ test2(F f)
     A a;
     assert(f(a, 1, 2) == 'c');
     A* ap = &a;
-    assert(f(ap, 2, 3.5) == 'c');
+    assert(f(ap, 2, 3LL) == 'c');
     volatile A* cap = &a;
-    assert(f(cap, 2, 3.5) == 'c');
+    assert(f(cap, 2, 3LL) == 'c');
     const F& cf = f;
-    assert(cf(ap, 2, 3.5) == 'c');
+    assert(cf(ap, 2, 3LL) == 'c');
     }
 }
 

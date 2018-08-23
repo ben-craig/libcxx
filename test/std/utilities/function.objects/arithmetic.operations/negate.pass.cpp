@@ -29,12 +29,13 @@ int main()
     const F2 f2 = F2();
     assert(f2(36) == -36);
     assert(f2(36L) == -36);
-    assert(f2(36.0) == -36);
+    //assert(f2(36.0) == -36);
 
     constexpr int foo = std::negate<int> () (3);
     static_assert ( foo == -3, "" );
-
+#if 0
     constexpr double bar = std::negate<> () (3.0);
     static_assert ( bar == -3.0, "" );
+#endif
 #endif
 }

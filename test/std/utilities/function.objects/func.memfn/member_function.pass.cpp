@@ -21,7 +21,7 @@ struct A
 {
     char test0() {return 'a';}
     char test1(int) {return 'b';}
-    char test2(int, double) {return 'c';}
+    char test2(int, long long) {return 'c';}
 };
 
 template <class F>
@@ -60,9 +60,9 @@ test2(F f)
     A a;
     assert(f(a, 1, 2) == 'c');
     A* ap = &a;
-    assert(f(ap, 2, 3.5) == 'c');
+    assert(f(ap, 2, 3LL) == 'c');
     const F& cf = f;
-    assert(cf(ap, 2, 3.5) == 'c');
+    assert(cf(ap, 2, 3LL) == 'c');
     }
 }
 
