@@ -34,9 +34,9 @@
 
 #include <iterator>
 #include <cassert>
-#include <vector>
+//#include <vector>
 #include <array>
-#include <list>
+//#include <list>
 #include <initializer_list>
 
 // std::array is explicitly allowed to be initialized with A a = { init-list };.
@@ -137,18 +137,18 @@ void test_const_array( const T (&array)[Sz] ) {
     }
 
 int main(){
-    std::vector<int> v; v.push_back(1);
-    std::list<int> l;   l.push_back(2);
+//    std::vector<int> v; v.push_back(1);
+//    std::list<int> l;   l.push_back(2);
     std::array<int, 1> a; a[0] = 3;
     std::initializer_list<int> il = { 4 };
 
-    test_container ( v, 1 );
-    test_container ( l, 2 );
+//    test_container ( v, 1 );
+//    test_container ( l, 2 );
     test_container ( a, 3 );
     test_container ( il, 4 );
 
-    test_const_container ( v, 1 );
-    test_const_container ( l, 2 );
+//    test_const_container ( v, 1 );
+//    test_const_container ( l, 2 );
     test_const_container ( a, 3 );
     test_const_container ( il, 4 );
 

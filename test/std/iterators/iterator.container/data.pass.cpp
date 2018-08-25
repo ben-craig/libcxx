@@ -21,7 +21,7 @@ int main () {}
 
 #include <iterator>
 #include <cassert>
-#include <vector>
+//#include <vector>
 #include <array>
 #include <initializer_list>
 
@@ -57,15 +57,15 @@ void test_const_array( const T (&array)[Sz] )
 
 int main()
 {
-    std::vector<int> v; v.push_back(1);
+    //std::vector<int> v; v.push_back(1);
     std::array<int, 1> a; a[0] = 3;
     std::initializer_list<int> il = { 4 };
 
-    test_container ( v );
+    //test_container ( v );
     test_container ( a );
     test_container ( il );
 
-    test_const_container ( v );
+    //test_const_container ( v );
     test_const_container ( a );
     test_const_container ( il );
 
