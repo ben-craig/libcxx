@@ -56,7 +56,7 @@ int main()
         test(p, 3, Ptr(i+3));
     }
 #endif
-#if TEST_STD_VER > 14
+#if 0 //TEST_STD_VER > 14
     {
     constexpr const char *p = "123456789";
     typedef std::move_iterator<const char *> MI;

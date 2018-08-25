@@ -8,7 +8,7 @@
 //===----------------------------------------------------------------------===//
 
 // Tests workaround for  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64816.
-
+#if 0
 #include <string>
 
 void f(const std::string &s) { s.begin(); }
@@ -16,5 +16,6 @@ void f(const std::string &s) { s.begin(); }
 #include <vector>
 
 void AppendTo(const std::vector<char> &v) { v.begin(); }
+#endif
 
 int main() {}

@@ -22,7 +22,7 @@
 
 
 #include <iterator>
-#include <list>
+#include <array>
 #include <cassert>
 
 #include "test_macros.h"
@@ -83,13 +83,14 @@ int main()
     test(&a+1, A());
 
     {
-    std::list<B> l;
-    l.push_back(B(0));
-    l.push_back(B(1));
-    l.push_back(B(2));
-
+    std::array<B,3> l = {
+        B(0),
+        B(1),
+        B(2),
+    };
+    
     {
-    std::list<B>::const_iterator i = l.begin();
+    std::array<B,3>::const_iterator i = l.begin();
     assert ( i->get() == 0 );  ++i;
     assert ( i->get() == 1 );  ++i;
     assert ( i->get() == 2 );  ++i;
@@ -97,7 +98,7 @@ int main()
     }
 
     {
-    std::list<B>::const_reverse_iterator ri = l.rbegin();
+    std::array<B,3>::const_reverse_iterator ri = l.rbegin();
     assert ( ri->get() == 2 );  ++ri;
     assert ( ri->get() == 1 );  ++ri;
     assert ( ri->get() == 0 );  ++ri;
