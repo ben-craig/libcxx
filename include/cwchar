@@ -112,13 +112,13 @@ size_t wcsrtombs(char* restrict dst, const wchar_t** restrict src, size_t len,
 #endif
 
 _LIBCPP_BEGIN_NAMESPACE_STD
-#if 0
 using ::mbstate_t;
-#endif
 using ::size_t;
 #if 0
 using ::tm;
+#endif
 using ::wint_t;
+#if 0
 using ::FILE;
 using ::fwprintf;
 using ::fwscanf;
