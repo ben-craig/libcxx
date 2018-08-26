@@ -304,11 +304,13 @@ test1()
 
 int main()
 {
+#if 0
     test<bidirectional_iterator<std::pair<int,int>*> >();
     test<random_access_iterator<std::pair<int,int>*> >();
     test<std::pair<int,int>*>();
 
 #if TEST_STD_VER >= 11
     test1<bidirectional_iterator<std::unique_ptr<int>*> >();
+#endif
 #endif
 }

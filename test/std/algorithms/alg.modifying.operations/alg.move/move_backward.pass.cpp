@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <cassert>
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#include <memory>
+#include "MoveOnly.h"
 #endif
 
 #include "test_iterators.h"
@@ -45,10 +45,10 @@ void
 test1()
 {
     const unsigned N = 100;
-    std::unique_ptr<int> ia[N];
+    MoveOnly ia[N];
     for (unsigned i = 0; i < N; ++i)
-        ia[i].reset(new int(i));
-    std::unique_ptr<int> ib[N];
+        ia[i].reset(i);
+    MoveOnly ib[N];
 
     OutIter r = std::move_backward(InIter(ia), InIter(ia+N), OutIter(ib+N));
     assert(base(r) == ib);
@@ -73,16 +73,16 @@ int main()
     test<const int*, int*>();
 
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-    test1<bidirectional_iterator<std::unique_ptr<int>*>, bidirectional_iterator<std::unique_ptr<int>*> >();
-    test1<bidirectional_iterator<std::unique_ptr<int>*>, random_access_iterator<std::unique_ptr<int>*> >();
-    test1<bidirectional_iterator<std::unique_ptr<int>*>, std::unique_ptr<int>*>();
+    test1<bidirectional_iterator<MoveOnly*>, bidirectional_iterator<MoveOnly*> >();
+    test1<bidirectional_iterator<MoveOnly*>, random_access_iterator<MoveOnly*> >();
+    test1<bidirectional_iterator<MoveOnly*>, MoveOnly*>();
 
-    test1<random_access_iterator<std::unique_ptr<int>*>, bidirectional_iterator<std::unique_ptr<int>*> >();
-    test1<random_access_iterator<std::unique_ptr<int>*>, random_access_iterator<std::unique_ptr<int>*> >();
-    test1<random_access_iterator<std::unique_ptr<int>*>, std::unique_ptr<int>*>();
+    test1<random_access_iterator<MoveOnly*>, bidirectional_iterator<MoveOnly*> >();
+    test1<random_access_iterator<MoveOnly*>, random_access_iterator<MoveOnly*> >();
+    test1<random_access_iterator<MoveOnly*>, MoveOnly*>();
 
-    test1<std::unique_ptr<int>*, bidirectional_iterator<std::unique_ptr<int>*> >();
-    test1<std::unique_ptr<int>*, random_access_iterator<std::unique_ptr<int>*> >();
-    test1<std::unique_ptr<int>*, std::unique_ptr<int>*>();
+    test1<MoveOnly*, bidirectional_iterator<MoveOnly*> >();
+    test1<MoveOnly*, random_access_iterator<MoveOnly*> >();
+    test1<MoveOnly*, MoveOnly*>();
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

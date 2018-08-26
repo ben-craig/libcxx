@@ -19,7 +19,7 @@
 #include <functional>
 #include <cassert>
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#include <memory>
+#include "MoveOnly.h"
 #endif
 
 #include "test_iterators.h"
@@ -50,7 +50,7 @@ test()
 
 struct pred
 {
-    bool operator()(const std::unique_ptr<int>& i) {return *i == 2;}
+    bool operator()(const MoveOnly& i) {return *i == 2;}
 };
 
 template <class Iter>
@@ -58,16 +58,16 @@ void
 test1()
 {
     const unsigned sa = 9;
-    std::unique_ptr<int> ia[sa];
-    ia[0].reset(new int(0));
-    ia[1].reset(new int(1));
-    ia[2].reset(new int(2));
-    ia[3].reset(new int(3));
-    ia[4].reset(new int(4));
-    ia[5].reset(new int(2));
-    ia[6].reset(new int(3));
-    ia[7].reset(new int(4));
-    ia[8].reset(new int(2));
+    MoveOnly ia[sa];
+    ia[0].reset(0);
+    ia[1].reset(1);
+    ia[2].reset(2);
+    ia[3].reset(3);
+    ia[4].reset(4);
+    ia[5].reset(2);
+    ia[6].reset(3);
+    ia[7].reset(4);
+    ia[8].reset(2);
     Iter r = std::remove_if(Iter(ia), Iter(ia+sa), pred());
     assert(base(r) == ia + sa-3);
     assert(*ia[0] == 0);
@@ -89,10 +89,10 @@ int main()
 
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
 
-    test1<forward_iterator<std::unique_ptr<int>*> >();
-    test1<bidirectional_iterator<std::unique_ptr<int>*> >();
-    test1<random_access_iterator<std::unique_ptr<int>*> >();
-    test1<std::unique_ptr<int>*>();
+    test1<forward_iterator<MoveOnly*> >();
+    test1<bidirectional_iterator<MoveOnly*> >();
+    test1<random_access_iterator<MoveOnly*> >();
+    test1<MoveOnly*>();
 
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

@@ -21,6 +21,7 @@
 
 int main()
 {
+#if 0
     int ia[] = {1, 2, 3, 4};
     int ia1[] = {1, 4, 3, 2};
     int ia2[] = {4, 1, 2, 3};
@@ -31,4 +32,5 @@ int main()
     std::random_shuffle(ia, ia+sa);
     LIBCPP_ASSERT(std::equal(ia, ia+sa, ia2));
     assert(std::is_permutation(ia, ia+sa, ia2));
+#endif
 }

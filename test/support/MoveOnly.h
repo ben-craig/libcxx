@@ -32,6 +32,10 @@ public:
         {data_ = x.data_; x.data_ = 0; return *this;}
 
     int get() const {return data_;}
+    void reset(int x) {data_ = x;}
+
+    int &operator*() {return data_;}
+    const int &operator*() const {return data_;}
 
     bool operator==(const MoveOnly& x) const {return data_ == x.data_;}
     bool operator< (const MoveOnly& x) const {return data_ <  x.data_;}

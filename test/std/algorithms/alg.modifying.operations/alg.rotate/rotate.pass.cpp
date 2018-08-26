@@ -15,10 +15,10 @@
 
 #include <algorithm>
 #include <cassert>
-#include <memory>
 
 #include "test_macros.h"
 #include "test_iterators.h"
+#include "MoveOnly.h"
 
 template <class Iter>
 void
@@ -218,10 +218,10 @@ template <class Iter>
 void
 test1()
 {
-    std::unique_ptr<int> ia[1];
+    MoveOnly ia[1];
     const int sa = static_cast<int>(sizeof(ia)/sizeof(ia[0]));
     for (int i = 0; i < sa; ++i)
-        ia[i].reset(new int(i));
+        ia[i].reset(i);
     Iter r = std::rotate(Iter(ia), Iter(ia), Iter(ia));
     assert(base(r) == ia);
     assert(*ia[0] == 0);
@@ -232,10 +232,10 @@ test1()
     assert(base(r) == ia);
     assert(*ia[0] == 0);
 
-    std::unique_ptr<int> ib[2];
+    MoveOnly ib[2];
     const int sb = static_cast<int>(sizeof(ib)/sizeof(ib[0]));
     for (int i = 0; i < sb; ++i)
-        ib[i].reset(new int(i));
+        ib[i].reset(i);
     r = std::rotate(Iter(ib), Iter(ib), Iter(ib+sb));
     assert(base(r) == ib+sb);
     assert(*ib[0] == 0);
@@ -249,10 +249,10 @@ test1()
     assert(*ib[0] == 1);
     assert(*ib[1] == 0);
 
-    std::unique_ptr<int> ic[3];
+    MoveOnly ic[3];
     const int sc = static_cast<int>(sizeof(ic)/sizeof(ic[0]));
     for (int i = 0; i < sc; ++i)
-        ic[i].reset(new int(i));
+        ic[i].reset(i);
     r = std::rotate(Iter(ic), Iter(ic), Iter(ic+sc));
     assert(base(r) == ic+sc);
     assert(*ic[0] == 0);
@@ -274,10 +274,10 @@ test1()
     assert(*ic[1] == 1);
     assert(*ic[2] == 2);
 
-    std::unique_ptr<int> id[4];
+    MoveOnly id[4];
     const int sd = static_cast<int>(sizeof(id)/sizeof(id[0]));
     for (int i = 0; i < sd; ++i)
-        id[i].reset(new int(i));
+        id[i].reset(i);
     r = std::rotate(Iter(id), Iter(id), Iter(id+sd));
     assert(base(r) == id+sd);
     assert(*id[0] == 0);
@@ -309,10 +309,10 @@ test1()
     assert(*id[2] == 0);
     assert(*id[3] == 1);
 
-    std::unique_ptr<int> ie[5];
+    MoveOnly ie[5];
     const int se = static_cast<int>(sizeof(ie)/sizeof(ie[0]));
     for (int i = 0; i < se; ++i)
-        ie[i].reset(new int(i));
+        ie[i].reset(i);
     r = std::rotate(Iter(ie), Iter(ie), Iter(ie+se));
     assert(base(r) == ie+se);
     assert(*ie[0] == 0);
@@ -356,10 +356,10 @@ test1()
     assert(*ie[3] == 3);
     assert(*ie[4] == 4);
 
-    std::unique_ptr<int> ig[6];
+    MoveOnly ig[6];
     const int sg = static_cast<int>(sizeof(ig)/sizeof(ig[0]));
     for (int i = 0; i < sg; ++i)
-        ig[i].reset(new int(i));
+        ig[i].reset(i);
     r = std::rotate(Iter(ig), Iter(ig), Iter(ig+sg));
     assert(base(r) == ig+sg);
     assert(*ig[0] == 0);
@@ -429,10 +429,10 @@ int main()
 
 #if TEST_STD_VER >= 11
 
-    test1<forward_iterator<std::unique_ptr<int>*> >();
-    test1<bidirectional_iterator<std::unique_ptr<int>*> >();
-    test1<random_access_iterator<std::unique_ptr<int>*> >();
-    test1<std::unique_ptr<int>*>();
+    test1<forward_iterator<MoveOnly*> >();
+    test1<bidirectional_iterator<MoveOnly*> >();
+    test1<random_access_iterator<MoveOnly*> >();
+    test1<MoveOnly*>();
 
 #endif
 }

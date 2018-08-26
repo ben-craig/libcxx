@@ -142,9 +142,11 @@ int main() {
   test<forward_iterator, int, output_iterator, int>();
   test<forward_iterator, int, random_access_iterator, int>();
 
+#if 0
   test<input_iterator, int, random_access_iterator, double>();
   test<forward_iterator, int, output_iterator, double>();
   test<forward_iterator, int, random_access_iterator, double>();
+#endif
 
   test_empty_population<input_iterator, int, random_access_iterator, int>();
   test_empty_population<forward_iterator, int, output_iterator, int>();
