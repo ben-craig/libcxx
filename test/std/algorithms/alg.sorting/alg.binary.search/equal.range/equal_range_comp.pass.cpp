@@ -17,7 +17,7 @@
 
 #include <algorithm>
 #include <functional>
-#include <vector>
+#include <array>
 #include <cassert>
 #include <cstddef>
 
@@ -38,13 +38,14 @@ test(Iter first, Iter last, const T& value)
         assert(std::greater<int>()(value, *j));
 }
 
+const unsigned N = 1000;
+const int M = 10;
+std::array<int, N> v;
+
 template <class Iter>
 void
 test()
 {
-    const unsigned N = 1000;
-    const int M = 10;
-    std::vector<int> v(N);
     int x = 0;
     for (std::size_t i = 0; i < v.size(); ++i)
     {

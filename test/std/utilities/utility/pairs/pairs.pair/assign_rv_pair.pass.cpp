@@ -16,7 +16,7 @@
 // pair& operator=(pair&& p);
 
 #include <utility>
-#include <memory>
+#include "MoveOnly.h"
 #include <cassert>
 
 
@@ -49,8 +49,8 @@ int CountAssign::moved = 0;
 int main()
 {
     {
-        typedef std::pair<std::unique_ptr<int>, short> P;
-        P p1(std::unique_ptr<int>(new int(3)), 4);
+        typedef std::pair<MoveOnly, short> P;
+        P p1(MoveOnly(3), 4);
         P p2;
         p2 = std::move(p1);
         assert(*p2.first == 3);

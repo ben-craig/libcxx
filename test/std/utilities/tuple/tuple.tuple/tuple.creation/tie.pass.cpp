@@ -24,6 +24,7 @@
 
 int main()
 {
+    #if 0
     {
         int i = 0;
         std::string s;
@@ -31,6 +32,7 @@ int main()
         assert(i == 42);
         assert(s == "C++");
     }
+    #endif
 #if TEST_STD_VER > 11
     {
         static constexpr int i = 42;

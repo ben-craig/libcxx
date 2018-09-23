@@ -115,12 +115,14 @@ int main()
         assert(std::get<0>(t) == 2);
         assert(std::get<1>(t) == nullptr);
     }
+    #if 0
     {
         std::tuple<int, char*, std::string> t(2, nullptr, "text");
         assert(std::get<0>(t) == 2);
         assert(std::get<1>(t) == nullptr);
         assert(std::get<2>(t) == "text");
     }
+    #endif
     // __tuple_leaf<T> uses is_constructible<T, U> to disable its explicit converting
     // constructor overload __tuple_leaf(U &&). Evaluating is_constructible can cause a compile error.
     // This overload is evaluated when __tuple_leafs copy or move ctor is called.

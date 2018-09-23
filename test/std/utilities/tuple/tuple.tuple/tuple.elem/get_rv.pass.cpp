@@ -19,15 +19,15 @@
 
 #include <tuple>
 #include <utility>
-#include <memory>
+#include "MoveOnly.h"
 #include <cassert>
 
 int main()
 {
     {
-        typedef std::tuple<std::unique_ptr<int> > T;
-        T t(std::unique_ptr<int>(new int(3)));
-        std::unique_ptr<int> p = std::get<0>(std::move(t));
+        typedef std::tuple<MoveOnly> T;
+        T t(MoveOnly(3));
+        MoveOnly p = std::get<0>(std::move(t));
         assert(*p == 3);
     }
 }

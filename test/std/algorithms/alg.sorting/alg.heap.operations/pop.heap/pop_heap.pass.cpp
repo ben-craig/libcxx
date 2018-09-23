@@ -16,21 +16,23 @@
 
 #include <algorithm>
 #include <cassert>
+#include <array>
+
+std::array<int, 1000> ia;
 
 void test(int N)
 {
-    int* ia = new int [N];
+    assert( N <= ia.size() );
     for (int i = 0; i < N; ++i)
         ia[i] = i;
-    std::random_shuffle(ia, ia+N);
-    std::make_heap(ia, ia+N);
+    std::random_shuffle(ia.begin(), ia.begin()+N);
+    std::make_heap(ia.begin(), ia.begin()+N);
     for (int i = N; i > 0; --i)
     {
-        std::pop_heap(ia, ia+i);
-        assert(std::is_heap(ia, ia+i-1));
+        std::pop_heap(ia.begin(), ia.begin()+i);
+        assert(std::is_heap(ia.begin(), ia.begin()+i-1));
     }
-    std::pop_heap(ia, ia);
-    delete [] ia;
+    std::pop_heap(ia.begin(), ia.begin());
 }
 
 int main()

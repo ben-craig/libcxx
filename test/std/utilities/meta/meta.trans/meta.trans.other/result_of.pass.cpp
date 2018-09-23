@@ -46,8 +46,8 @@ template <class T, class U>
 void test_result_of()
 {
 #if TEST_STD_VER > 14
-    static_assert(std::is_callable<T>::value, "");
-    static_assert(std::is_callable<T, U>::value, "");
+//    static_assert(std::is_callable<T>::value, "");
+//    static_assert(std::is_callable<T, U>::value, "");
 #endif
     static_assert((std::is_same<typename std::result_of<T>::type, U>::value), "");
 }
@@ -59,7 +59,7 @@ void test_no_result()
     static_assert((!HasType<std::result_of<T> >::value), "");
 #endif
 #if TEST_STD_VER > 14
-    static_assert(std::is_callable<T>::value == false, "");
+//    static_assert(std::is_callable<T>::value == false, "");
 #endif
 }
 

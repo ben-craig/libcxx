@@ -11,7 +11,7 @@
 
 #include "test_macros.h"
 
-#if TEST_STD_VER >= 11
+#if 0 //TEST_STD_VER >= 11
 
 #include <tuple>
 #include <functional>

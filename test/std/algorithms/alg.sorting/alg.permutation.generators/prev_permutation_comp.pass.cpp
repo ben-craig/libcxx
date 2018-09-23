@@ -50,9 +50,9 @@ test()
             if (e > 1)
             {
                 if (x)
-                    assert(std::lexicographical_compare(ia, ia+e, prev, prev+e, C()));
+                {    assert(std::lexicographical_compare(ia, ia+e, prev, prev+e, C()));}
                 else
-                    assert(std::lexicographical_compare(prev, prev+e, ia, ia+e, C()));
+                {    assert(std::lexicographical_compare(prev, prev+e, ia, ia+e, C()));}
             }
             ++count;
         } while (x);

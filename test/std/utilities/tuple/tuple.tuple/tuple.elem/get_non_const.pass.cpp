@@ -46,6 +46,7 @@ int main()
         std::get<0>(t) = 2;
         assert(std::get<0>(t) == 2);
     }
+    #if 0
     {
         typedef std::tuple<std::string, int> T;
         T t("high", 5);
@@ -71,6 +72,7 @@ int main()
         assert(std::get<2>(t) == 4);
         assert(d == 2.5);
     }
+    #endif
 #if TEST_STD_VER > 11
     { // get on an rvalue tuple
         static_assert ( std::get<0> ( std::make_tuple ( 0.0f, 1, 2.0, 3L )) == 0, "" );

@@ -15,6 +15,7 @@
 #include <memory>
 #include <cassert>
 
+#include "MoveOnly.h"
 #include "test_macros.h"
 
 int main()
@@ -28,15 +29,15 @@ int main()
 
 #if TEST_STD_VER >= 11
     {
-        typedef std::pair<std::unique_ptr<int>, short> P1;
-        P1 p1 = std::make_pair(std::unique_ptr<int>(new int(3)), static_cast<short>(4));
+        typedef std::pair<MoveOnly, short> P1;
+        P1 p1 = std::make_pair(MoveOnly(3), static_cast<short>(4));
         assert(*p1.first == 3);
         assert(p1.second == 4);
     }
     {
-        typedef std::pair<std::unique_ptr<int>, short> P1;
-        P1 p1 = std::make_pair(nullptr, static_cast<short>(4));
-        assert(p1.first == nullptr);
+        typedef std::pair<MoveOnly, short> P1;
+        P1 p1 = std::make_pair(0, static_cast<short>(4));
+        assert(p1.first == 0);
         assert(p1.second == 4);
     }
 #endif

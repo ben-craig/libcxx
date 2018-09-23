@@ -50,8 +50,8 @@ struct ImplicitT {
 int main()
 {
     {
-        typedef std::pair<std::unique_ptr<int>, short*> P;
-        P p(std::unique_ptr<int>(new int(3)), nullptr);
+        typedef std::pair<MoveOnly, short*> P;
+        P p(MoveOnly(3), nullptr);
         assert(*p.first == 3);
         assert(p.second == nullptr);
     }

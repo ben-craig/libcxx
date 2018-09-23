@@ -36,6 +36,7 @@ int main()
     assert(i == 3);
     }
 
+    #if 0
     {
     typedef std::tuple<std::string, int> T;
     const T t("high", 5);
@@ -48,6 +49,7 @@ int main()
     assert(s == "high");
     assert(i == 5);
     }
+    #endif
 
     {
     int x = 42;

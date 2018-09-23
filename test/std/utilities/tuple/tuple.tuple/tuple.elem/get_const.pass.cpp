@@ -32,12 +32,14 @@ int main()
         const T t(3);
         assert(std::get<0>(t) == 3);
     }
+    #if 0
     {
         typedef std::tuple<std::string, int> T;
         const T t("high", 5);
         assert(std::get<0>(t) == "high");
         assert(std::get<1>(t) == 5);
     }
+    #endif
 #if TEST_STD_VER > 11
     {
         typedef std::tuple<double, int> T;
@@ -52,6 +54,7 @@ int main()
         ((void)e); // Prevent unused warning
     }
 #endif
+#if 0
     {
         typedef std::tuple<double&, std::string, int> T;
         double d = 1.5;
@@ -65,4 +68,5 @@ int main()
         assert(std::get<2>(t) == 5);
         assert(d == 2.5);
     }
+#endif
 }

@@ -17,9 +17,11 @@
 #include <type_traits>
 
 #include <cassert>
+#include "MoveOnly.h"
 
 int main()
 {
+    #if 0
     typedef std::complex<float> cf;
     {
     auto t1 = std::tuple<int, std::string, cf> { 42, "Hi", { 1,2 }};
@@ -35,7 +37,8 @@ int main()
     assert ( std::get<std::string>(t2) == "Hi" );
     assert (( std::get<cf>(t2) == cf{ 1,2 } ));
     }
-
+    #endif
+    
     {
     constexpr std::tuple<int, const int, double, double> p5 { 1, 2, 3.4, 5.6 };
     static_assert ( std::get<int>(p5) == 1, "" );
@@ -51,19 +54,17 @@ int main()
     }
 
     {
-    typedef std::unique_ptr<int> upint;
-    std::tuple<upint> t(upint(new int(4)));
-    upint p = std::get<upint>(std::move(t)); // get rvalue
+    std::tuple<MoveOnly> t(MoveOnly(4));
+    MoveOnly p = std::get<MoveOnly>(std::move(t)); // get rvalue
     assert(*p == 4);
-    assert(std::get<upint>(t) == nullptr); // has been moved from
+    assert(std::get<MoveOnly>(t) == 0); // has been moved from
     }
 
     {
-    typedef std::unique_ptr<int> upint;
-    const std::tuple<upint> t(upint(new int(4)));
-    const upint&& p = std::get<upint>(std::move(t)); // get const rvalue
+    const std::tuple<MoveOnly> t(MoveOnly(4));
+    const MoveOnly&& p = std::get<MoveOnly>(std::move(t)); // get const rvalue
     assert(*p == 4);
-    assert(std::get<upint>(t) != nullptr);
+    assert(*std::get<MoveOnly>(t) != 0);
     }
 
     {

@@ -36,7 +36,7 @@ struct B
 
     explicit B(int i) : id_(i) {}
 
-    virtual ~B() {}
+    /*virtual*/ ~B() {}
 };
 
 struct D
@@ -82,6 +82,7 @@ int main()
         assert(std::get<1>(t1) == int('a'));
         assert(std::get<2>(t1).id_ == 2);
     }
+    #if 0
     {
         typedef std::tuple<long, char, std::unique_ptr<D>> T0;
         typedef std::tuple<long long, int, std::unique_ptr<B>> T1;
@@ -91,6 +92,7 @@ int main()
         assert(std::get<1>(t1) == int('a'));
         assert(std::get<2>(t1)->id_ == 3);
     }
+    #endif
     {
         std::tuple<int> t1(42);
         std::tuple<Explicit> t2(std::move(t1));

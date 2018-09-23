@@ -18,8 +18,10 @@
 #include <algorithm>
 #include <functional>
 #include <cassert>
+#include <array>
+
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#include <memory>
+#include "MoveOnly.h"
 
 struct indirect_less
 {
@@ -30,37 +32,35 @@ struct indirect_less
 
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 
-void test(int N)
+std::array<int, 1000> ia;
+
+void test()
 {
-    int* ia = new int [N];
-    for (int i = 0; i < N; ++i)
+    for (int i = 0; i < ia.size(); ++i)
         ia[i] = i;
-    std::random_shuffle(ia, ia+N);
-    for (int i = 0; i <= N; ++i)
+    std::random_shuffle(ia.begin(), ia.end());
+    for (int i = 0; i <= ia.size(); ++i)
     {
-        std::push_heap(ia, ia+i, std::greater<int>());
-        assert(std::is_heap(ia, ia+i, std::greater<int>()));
+        std::push_heap(ia.begin(), ia.begin()+i, std::greater<int>());
+        assert(std::is_heap(ia.begin(), ia.begin()+i, std::greater<int>()));
     }
-    delete [] ia;
 }
 
+std::array<MoveOnly, 1000> uia;
 int main()
 {
-    test(1000);
+    test();
 
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
-    const int N = 1000;
-    std::unique_ptr<int>* ia = new std::unique_ptr<int> [N];
-    for (int i = 0; i < N; ++i)
-        ia[i].reset(new int(i));
-    std::random_shuffle(ia, ia+N);
-    for (int i = 0; i <= N; ++i)
+    for (int i = 0; i < uia.size(); ++i)
+        uia[i].reset(i);
+    std::random_shuffle(uia.begin(), uia.end());
+    for (int i = 0; i <= uia.size(); ++i)
     {
-        std::push_heap(ia, ia+i, indirect_less());
-        assert(std::is_heap(ia, ia+i, indirect_less()));
+        std::push_heap(uia.begin(), uia.begin()+i, indirect_less());
+        assert(std::is_heap(uia.begin(), uia.begin()+i, indirect_less()));
     }
-    delete [] ia;
     }
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

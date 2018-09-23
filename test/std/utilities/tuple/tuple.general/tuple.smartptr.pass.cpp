@@ -16,16 +16,18 @@
 #include <tuple>
 #include <memory>
 
+struct NopDeleter { void operator()(void *) {} };
+
 int main () {
     {
-    std::tuple<std::unique_ptr<char>> up;
-    std::tuple<std::shared_ptr<char>> sp;
-    std::tuple<std::weak_ptr  <char>> wp;
+    std::tuple<std::unique_ptr<char, NopDeleter> > up;
+    //std::tuple<std::shared_ptr<char>> sp;
+    //std::tuple<std::weak_ptr  <char>> wp;
     }
     {
-    std::tuple<std::unique_ptr<char[]>> up;
-    std::tuple<std::shared_ptr<char[]>> sp;
-    std::tuple<std::weak_ptr  <char[]>> wp;
+    std::tuple<std::unique_ptr<char[], NopDeleter> > up;
+    //std::tuple<std::shared_ptr<char[]>> sp;
+    //std::tuple<std::weak_ptr  <char[]>> wp;
     }
     // Smart pointers of type 'T[N]' are not tested here since they are not
     // supported by the standard nor by libc++'s implementation.

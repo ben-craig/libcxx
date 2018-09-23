@@ -44,6 +44,7 @@ int main()
         assert(std::get<0>(t) == 2);
         assert(std::get<1>(t) == 'a');
     }
+    #if 0
     {
         typedef std::tuple<int, char, std::string> T;
         const T t0(2, 'a', "some text");
@@ -52,6 +53,7 @@ int main()
         assert(std::get<1>(t) == 'a');
         assert(std::get<2>(t) == "some text");
     }
+    #endif
 #if TEST_STD_VER > 11
     {
         typedef std::tuple<int> T;

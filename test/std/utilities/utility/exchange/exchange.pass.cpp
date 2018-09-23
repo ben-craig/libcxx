@@ -36,6 +36,7 @@ int main()
     assert ( b );
     }
 
+    #if 0
     {
     const std::string s1 ( "Hi Mom!" );
     const std::string s2 ( "Yo Dad!" );
@@ -53,4 +54,5 @@ int main()
     assert ( std::exchange ( s3, "" ) == s2 );
     assert ( s3.size () == 0 );
     }
+    #endif
 }

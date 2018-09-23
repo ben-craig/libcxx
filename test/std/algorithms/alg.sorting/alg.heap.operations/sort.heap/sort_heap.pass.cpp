@@ -16,17 +16,19 @@
 
 #include <algorithm>
 #include <cassert>
+#include <array>
+
+std::array<int, 1000> ia;
 
 void test(int N)
 {
-    int* ia = new int [N];
+    assert(N <= ia.size());
     for (int i = 0; i < N; ++i)
         ia[i] = i;
-    std::random_shuffle(ia, ia+N);
-    std::make_heap(ia, ia+N);
-    std::sort_heap(ia, ia+N);
-    assert(std::is_sorted(ia, ia+N));
-    delete [] ia;
+    std::random_shuffle(ia.begin(), ia.begin()+N);
+    std::make_heap(ia.begin(), ia.begin()+N);
+    std::sort_heap(ia.begin(), ia.begin()+N);
+    assert(std::is_sorted(ia.begin(), ia.begin()+N));
 }
 
 int main()

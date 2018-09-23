@@ -48,9 +48,9 @@ test()
             if (e > 1)
             {
                 if (x)
-                    assert(std::lexicographical_compare(ia, ia+e, prev, prev+e));
+                {    assert(std::lexicographical_compare(ia, ia+e, prev, prev+e));}
                 else
-                    assert(std::lexicographical_compare(prev, prev+e, ia, ia+e));
+                {    assert(std::lexicographical_compare(prev, prev+e, ia, ia+e));}
             }
             ++count;
         } while (x);

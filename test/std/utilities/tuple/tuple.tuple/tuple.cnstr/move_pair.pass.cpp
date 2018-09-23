@@ -37,6 +37,7 @@ struct D
 
 int main()
 {
+    #if 0
     {
         typedef std::pair<long, std::unique_ptr<D>> T0;
         typedef std::tuple<long long, std::unique_ptr<B>> T1;
@@ -45,4 +46,5 @@ int main()
         assert(std::get<0>(t1) == 2);
         assert(std::get<1>(t1)->id_ == 3);
     }
+    #endif
 }
