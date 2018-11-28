@@ -16,7 +16,7 @@
 
 #include <algorithm>
 #include <functional>
-#include <memory>
+#include "MoveOnly.h"
 #include <cassert>
 
 #include "test_macros.h"
@@ -29,10 +29,11 @@ struct indirect_less
         {return *x < *y;}
 };
 
+int scratch_array[100000];
 
 void test(int N)
 {
-    int* ia = new int [N];
+    int* ia = scratch_array;
     {
     for (int i = 0; i < N; ++i)
         ia[i] = i;
@@ -69,9 +70,11 @@ void test(int N)
     assert(pred.count() <= 3u*N);
     assert(std::is_heap(ia, ia+N, pred));
     }
-
-    delete [] ia;
 }
+
+#if TEST_STD_VER >= 11
+MoveOnly scratch_move_array[1000];
+#endif
 
 int main()
 {
@@ -87,13 +90,12 @@ int main()
 #if TEST_STD_VER >= 11
     {
     const int N = 1000;
-    std::unique_ptr<int>* ia = new std::unique_ptr<int> [N];
+    MoveOnly* ia = scratch_move_array;
     for (int i = 0; i < N; ++i)
-        ia[i].reset(new int(i));
+        ia[i].reset(i);
     std::random_shuffle(ia, ia+N);
     std::make_heap(ia, ia+N, indirect_less());
     assert(std::is_heap(ia, ia+N, indirect_less()));
-    delete [] ia;
     }
 #endif
 }

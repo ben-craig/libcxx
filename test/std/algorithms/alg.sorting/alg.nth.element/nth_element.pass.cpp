@@ -18,19 +18,20 @@
 #include <algorithm>
 #include <cassert>
 
+int scratch_array[10000];
+
 void
 test_one(int N, int M)
 {
     assert(N != 0);
     assert(M < N);
-    int* array = new int[N];
+    int* array = scratch_array;
     for (int i = 0; i < N; ++i)
         array[i] = i;
     std::random_shuffle(array, array+N);
     std::nth_element(array, array+M, array+N);
     assert(array[M] == M);
     std::nth_element(array, array+N, array+N); // begin, end, end
-    delete [] array;
 }
 
 void

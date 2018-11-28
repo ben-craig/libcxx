@@ -23,15 +23,17 @@
 
 #include "test_iterators.h"
 
+const unsigned MaxN = 100000;
+int ia[MaxN];
+int ib[MaxN];
+int ic[2*MaxN];
+
 template <class InIter1, class InIter2, class OutIter>
 void
 test()
 {
     {
     unsigned N = 100000;
-    int* ia = new int[N];
-    int* ib = new int[N];
-    int* ic = new int[2*N];
     for (unsigned i = 0; i < N; ++i)
         ia[i] = 2*i;
     for (unsigned i = 0; i < N; ++i)
@@ -42,15 +44,9 @@ test()
     assert(ic[0] == 0);
     assert(ic[2*N-1] == static_cast<int>(2*N-1));
     assert(std::is_sorted(ic, ic+2*N));
-    delete [] ic;
-    delete [] ib;
-    delete [] ia;
     }
     {
     unsigned N = 100;
-    int* ia = new int[N];
-    int* ib = new int[N];
-    int* ic = new int[2*N];
     for (unsigned i = 0; i < 2*N; ++i)
         ic[i] = i;
     std::random_shuffle(ic, ic+2*N);
@@ -64,9 +60,6 @@ test()
     assert(ic[0] == 0);
     assert(ic[2*N-1] == static_cast<int>(2*N-1));
     assert(std::is_sorted(ic, ic+2*N));
-    delete [] ic;
-    delete [] ib;
-    delete [] ia;
     }
 }
 

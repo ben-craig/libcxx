@@ -18,7 +18,7 @@
 
 // http://llvm.org/bugs/show_bug.cgi?id=16343
 
-#include <cmath>
+//#include <cmath>
 #include <functional>
 #include <cassert>
 
@@ -28,7 +28,10 @@ struct power
   T
   operator()(T a, T b)
   {
-    return static_cast<T>(std::pow(a, b));
+    T retval = 1;
+    while(b-- > 0)
+        retval *= a;
+    return retval;
   }
 };
 

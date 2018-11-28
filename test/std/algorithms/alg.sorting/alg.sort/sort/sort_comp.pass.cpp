@@ -17,11 +17,11 @@
 
 #include <algorithm>
 #include <functional>
-#include <vector>
+#include <array>
 #include <cassert>
 #include <cstddef>
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#include <memory>
+#include "MoveOnly.h"
 
 struct indirect_less
 {
@@ -32,27 +32,28 @@ struct indirect_less
 
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 
+std::array<int, 1000> scratch_arr;
+std::array<MoveOnly, 1000> scratch_move;
+
 int main()
 {
     {
-    std::vector<int> v(1000);
-    for (int i = 0; static_cast<std::size_t>(i) < v.size(); ++i)
-        v[i] = i;
-    std::sort(v.begin(), v.end(), std::greater<int>());
-    std::reverse(v.begin(), v.end());
-    assert(std::is_sorted(v.begin(), v.end()));
+    for (int i = 0; static_cast<std::size_t>(i) < scratch_arr.size(); ++i)
+        scratch_arr[i] = i;
+    std::sort(scratch_arr.begin(), scratch_arr.end(), std::greater<int>());
+    std::reverse(scratch_arr.begin(), scratch_arr.end());
+    assert(std::is_sorted(scratch_arr.begin(), scratch_arr.end()));
     }
 
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
-    std::vector<std::unique_ptr<int> > v(1000);
-    for (int i = 0; static_cast<std::size_t>(i) < v.size(); ++i)
-        v[i].reset(new int(i));
-    std::sort(v.begin(), v.end(), indirect_less());
-    assert(std::is_sorted(v.begin(), v.end(), indirect_less()));
-    assert(*v[0] == 0);
-    assert(*v[1] == 1);
-    assert(*v[2] == 2);
+    for (int i = 0; static_cast<std::size_t>(i) < scratch_move.size(); ++i)
+        scratch_move[i].reset(i);
+    std::sort(scratch_move.begin(), scratch_move.end(), indirect_less());
+    assert(std::is_sorted(scratch_move.begin(), scratch_move.end(), indirect_less()));
+    assert(*scratch_move[0] == 0);
+    assert(*scratch_move[1] == 1);
+    assert(*scratch_move[2] == 2);
     }
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

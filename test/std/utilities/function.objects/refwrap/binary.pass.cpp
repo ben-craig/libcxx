@@ -49,6 +49,7 @@ struct C
 
 int main()
 {
+#if 0
     static_assert((!std::is_base_of<std::binary_function<int, char, int>,
                                     std::reference_wrapper<functor1> >::value), "");
     static_assert((std::is_base_of<std::binary_function<char, int, double>,
@@ -77,4 +78,5 @@ int main()
                                    std::reference_wrapper<float(C::*)(int)> >::value), "");
     static_assert((std::is_base_of<std::binary_function<const volatile C*, int, float>,
                                    std::reference_wrapper<float(C::*)(int) const volatile> >::value), "");
+#endif
 }

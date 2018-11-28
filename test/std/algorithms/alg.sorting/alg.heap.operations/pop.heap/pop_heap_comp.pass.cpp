@@ -18,7 +18,7 @@
 #include <functional>
 #include <cassert>
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#include <memory>
+#include "MoveOnly.h"
 
 struct indirect_less
 {
@@ -29,9 +29,11 @@ struct indirect_less
 
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 
+int scratch_array[10000];
+
 void test(int N)
 {
-    int* ia = new int [N];
+    int* ia = scratch_array;
     for (int i = 0; i < N; ++i)
         ia[i] = i;
     std::random_shuffle(ia, ia+N);
@@ -42,8 +44,11 @@ void test(int N)
         assert(std::is_heap(ia, ia+i-1, std::greater<int>()));
     }
     std::pop_heap(ia, ia, std::greater<int>());
-    delete [] ia;
 }
+
+#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+MoveOnly scratch_move[1000];
+#endif
 
 int main()
 {
@@ -52,9 +57,9 @@ int main()
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
     const int N = 1000;
-    std::unique_ptr<int>* ia = new std::unique_ptr<int> [N];
+    MoveOnly* ia = scratch_move;
     for (int i = 0; i < N; ++i)
-        ia[i].reset(new int(i));
+        ia[i].reset(i);
     std::random_shuffle(ia, ia+N);
     std::make_heap(ia, ia+N, indirect_less());
     for (int i = N; i > 0; --i)
@@ -62,7 +67,6 @@ int main()
         std::pop_heap(ia, ia+i, indirect_less());
         assert(std::is_heap(ia, ia+i-1, indirect_less()));
     }
-    delete [] ia;
     }
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

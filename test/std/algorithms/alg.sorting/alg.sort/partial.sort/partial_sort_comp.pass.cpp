@@ -21,7 +21,7 @@
 #include <cassert>
 #include <cstddef>
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#include <memory>
+#include "MoveOnly.h"
 
 struct indirect_less
 {
@@ -32,12 +32,15 @@ struct indirect_less
 
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 
+static const int max_size_test = 2000;
+int input_array[max_size_test];
+
 void
 test_larger_sorts(int N, int M)
 {
     assert(N != 0);
     assert(N >= M);
-    int* array = new int[N];
+    int* array = input_array;
     for (int i = 0; i < N; ++i)
         array[i] = i;
     std::random_shuffle(array, array+N);
@@ -47,7 +50,6 @@ test_larger_sorts(int N, int M)
         assert(i < N); // quiet analysis warnings
         assert(array[i] == N-i-1);
     }
-    delete [] array;
 }
 
 void
@@ -64,6 +66,10 @@ test_larger_sorts(int N)
     test_larger_sorts(N, N-1);
     test_larger_sorts(N, N);
 }
+
+#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+MoveOnly move_only_v[1000];
+#endif
 
 int main()
 {
@@ -83,12 +89,11 @@ int main()
 
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
-    std::vector<std::unique_ptr<int> > v(1000);
-    for (int i = 0; static_cast<std::size_t>(i) < v.size(); ++i)
-        v[i].reset(new int(i));
-    std::partial_sort(v.begin(), v.begin() + v.size()/2, v.end(), indirect_less());
-    for (int i = 0; static_cast<std::size_t>(i) < v.size()/2; ++i)
-        assert(*v[i] == i);
+    for (int i = 0; static_cast<std::size_t>(i) < std::size(move_only_v); ++i)
+        move_only_v[i].reset(i);
+    std::partial_sort(std::begin(move_only_v), std::begin(move_only_v) + std::size(move_only_v)/2, std::end(move_only_v), indirect_less());
+    for (int i = 0; static_cast<std::size_t>(i) < std::size(move_only_v)/2; ++i)
+        assert(*move_only_v[i] == i);
     }
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

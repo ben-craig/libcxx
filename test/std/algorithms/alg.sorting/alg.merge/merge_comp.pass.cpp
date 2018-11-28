@@ -27,15 +27,19 @@
 #include "test_iterators.h"
 #include "counting_predicates.hpp"
 
+int scratch_ia[100000];
+int scratch_ib[100000];
+int scratch_ic[200000];
+
 template <class InIter1, class InIter2, class OutIter>
 void
 test()
 {
     {
     unsigned N = 100000;
-    int* ia = new int[N];
-    int* ib = new int[N];
-    int* ic = new int[2*N];
+    int* ia = scratch_ia;
+    int* ib = scratch_ib;
+    int* ic = scratch_ic;
     for (unsigned i = 0; i < N; ++i)
         ia[i] = 2*i;
     for (unsigned i = 0; i < N; ++i)
@@ -50,15 +54,12 @@ test()
     assert(ic[2*N-1] == 0);
     assert(std::is_sorted(ic, ic+2*N, std::greater<int>()));
     assert(pred.count() <= (N + N - 1));
-    delete [] ic;
-    delete [] ib;
-    delete [] ia;
     }
     {
     unsigned N = 100;
-    int* ia = new int[N];
-    int* ib = new int[N];
-    int* ic = new int[2*N];
+    int* ia = scratch_ia;
+    int* ib = scratch_ib;
+    int* ic = scratch_ic;
     for (unsigned i = 0; i < 2*N; ++i)
         ic[i] = i;
     std::random_shuffle(ic, ic+2*N);
@@ -74,9 +75,6 @@ test()
     assert(ic[2*N-1] == 0);
     assert(std::is_sorted(ic, ic+2*N, std::greater<int>()));
     assert(pred.count() <= (N + N - 1));
-    delete [] ic;
-    delete [] ib;
-    delete [] ia;
     }
 }
 

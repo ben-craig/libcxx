@@ -32,23 +32,24 @@ test(Iter first, Iter last, const T& value)
         assert(value < *j);
 }
 
+int scratch_array[1000];
+
 template <class Iter>
 void
 test()
 {
     const unsigned N = 1000;
     const int M = 10;
-    std::vector<int> v(N);
     int x = 0;
-    for (std::size_t i = 0; i < v.size(); ++i)
+    for (std::size_t i = 0; i < std::size(scratch_array); ++i)
     {
-        v[i] = x;
+        scratch_array[i] = x;
         if (++x == M)
             x = 0;
     }
-    std::sort(v.begin(), v.end());
+    std::sort(std::begin(scratch_array), std::end(scratch_array));
     for (x = 0; x <= M; ++x)
-        test(Iter(v.data()), Iter(v.data()+v.size()), x);
+        test(Iter(scratch_array), Iter(scratch_array+std::size(scratch_array)), x);
 }
 
 int main()

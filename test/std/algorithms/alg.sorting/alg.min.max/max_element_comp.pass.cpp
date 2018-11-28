@@ -35,16 +35,17 @@ test(Iter first, Iter last)
         assert(i == last);
 }
 
+int scratch_array[10000];
+
 template <class Iter>
 void
 test(int N)
 {
-    int* a = new int[N];
+    int* a = scratch_array;
     for (int i = 0; i < N; ++i)
         a[i] = i;
     std::random_shuffle(a, a+N);
     test(Iter(a), Iter(a+N));
-    delete [] a;
 }
 
 template <class Iter>
@@ -68,12 +69,11 @@ void test_eq0(Iter first, Iter last, Pred p)
 void test_eq()
 {
     const int N = 10;
-    int* a = new int[N];
+    int a[10];
     for (int i = 0; i < N; ++i)
         a[i] = 10; // all the same
     test_eq0(a, a+N, std::less<int>());
     test_eq0(a, a+N, std::greater<int>());
-    delete [] a;
 }
 
 #if TEST_STD_VER >= 14

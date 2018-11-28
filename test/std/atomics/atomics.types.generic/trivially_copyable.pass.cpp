@@ -72,6 +72,6 @@ void test ( T t ) {
 int main()
 {
     test(TriviallyCopyable(42));
-    test(std::this_thread::get_id());
+    //test(std::this_thread::get_id());
     test(std::chrono::nanoseconds(2));
 }

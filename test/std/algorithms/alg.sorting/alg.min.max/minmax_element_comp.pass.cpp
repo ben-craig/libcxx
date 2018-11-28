@@ -43,16 +43,17 @@ test(Iter first, Iter last)
     }
 }
 
+int scratch_array[10000];
+
 template <class Iter>
 void
 test(int N)
 {
-    int* a = new int[N];
+    int* a = scratch_array;
     for (int i = 0; i < N; ++i)
         a[i] = i;
     std::random_shuffle(a, a+N);
     test(Iter(a), Iter(a+N));
-    delete [] a;
 }
 
 template <class Iter>
@@ -67,7 +68,7 @@ test()
     test<Iter>(1000);
     {
     const int N = 100;
-    int* a = new int[N];
+    int* a = scratch_array;
     for (int i = 0; i < N; ++i)
         a[i] = 5;
     std::random_shuffle(a, a+N);
@@ -76,7 +77,6 @@ test()
     std::pair<Iter, Iter> p = std::minmax_element(Iter(a), Iter(a+N), comp);
     assert(base(p.first) == a);
     assert(base(p.second) == a+N-1);
-    delete [] a;
     }
 }
 

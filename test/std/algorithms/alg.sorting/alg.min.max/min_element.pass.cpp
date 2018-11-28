@@ -33,16 +33,17 @@ test(Iter first, Iter last)
         assert(i == last);
 }
 
+int scratch_array[10000];
+
 template <class Iter>
 void
 test(int N)
 {
-    int* a = new int[N];
+    int* a = scratch_array;
     for (int i = 0; i < N; ++i)
         a[i] = i;
     std::random_shuffle(a, a+N);
     test(Iter(a), Iter(a+N));
-    delete [] a;
 }
 
 template <class Iter>

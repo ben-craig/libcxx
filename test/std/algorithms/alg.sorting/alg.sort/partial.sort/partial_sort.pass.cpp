@@ -18,12 +18,15 @@
 #include <algorithm>
 #include <cassert>
 
+static const int max_size_test = 2000;
+int input_array[max_size_test];
+
 void
 test_larger_sorts(int N, int M)
 {
     assert(N != 0);
     assert(N >= M);
-    int* array = new int[N];
+    int* array = input_array;
     for (int i = 0; i < N; ++i)
         array[i] = i;
     std::random_shuffle(array, array+N);
@@ -33,7 +36,6 @@ test_larger_sorts(int N, int M)
         assert(i < N); // quiet analysis warnings
         assert(array[i] == i);
     }
-    delete [] array;
 }
 
 void

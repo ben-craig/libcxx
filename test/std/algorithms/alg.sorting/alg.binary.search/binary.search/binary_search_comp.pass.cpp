@@ -30,25 +30,26 @@ test(Iter first, Iter last, const T& value, bool x)
     assert(std::binary_search(first, last, value, std::greater<int>()) == x);
 }
 
+int scratch_array[1000];
+
 template <class Iter>
 void
 test()
 {
     const unsigned N = 1000;
     const int M = 10;
-    std::vector<int> v(N);
     int x = 0;
-    for (std::size_t i = 0; i < v.size(); ++i)
+    for (std::size_t i = 0; i < N; ++i)
     {
-        v[i] = x;
+        scratch_array[i] = x;
         if (++x == M)
             x = 0;
     }
-    std::sort(v.begin(), v.end(), std::greater<int>());
+    std::sort(scratch_array, std::end(scratch_array), std::greater<int>());
     for (x = 0; x < M; ++x)
-        test(Iter(v.data()), Iter(v.data()+v.size()), x, true);
-    test(Iter(v.data()), Iter(v.data()+v.size()), -1, false);
-    test(Iter(v.data()), Iter(v.data()+v.size()), M, false);
+        test(Iter(scratch_array), Iter(scratch_array + std::size(scratch_array)), x, true);
+    test(Iter(scratch_array), Iter(scratch_array + std::size(scratch_array)), -1, false);
+    test(Iter(scratch_array), Iter(scratch_array + std::size(scratch_array)), M, false);
 }
 
 int main()

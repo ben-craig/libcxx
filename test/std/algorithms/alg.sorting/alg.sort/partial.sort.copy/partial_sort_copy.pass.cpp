@@ -22,12 +22,23 @@
 
 #include "test_iterators.h"
 
+static const int max_size_test = 10000;
+int input_array[max_size_test];
+int output_array[max_size_test];
+
 template <class Iter>
 void
 test_larger_sorts(int N, int M)
 {
-    int* input = new int[N];
-    int* output = new int[M];
+    assert(M < max_size_test);
+    if(M >= max_size_test)
+        return;
+    assert(N < max_size_test);
+    if(N >= max_size_test)
+        return;
+
+    int* input = input_array;
+    int* output = output_array;
     for (int i = 0; i < N; ++i)
         input[i] = i;
     std::random_shuffle(input, input+N);
@@ -37,8 +48,6 @@ test_larger_sorts(int N, int M)
     int i = 0;
     for (int* x = output; x < e; ++x, ++i)
         assert(*x == i);
-    delete [] output;
-    delete [] input;
 }
 
 template <class Iter>

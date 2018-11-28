@@ -49,6 +49,7 @@ struct C
 
 int main()
 {
+#if 0
     static_assert((std::is_base_of<std::unary_function<int, char>,
                                    std::reference_wrapper<functor1> >::value), "");
     static_assert((!std::is_base_of<std::unary_function<char, int>,
@@ -75,4 +76,5 @@ int main()
                                    std::reference_wrapper<float(C::*)() const volatile> >::value), "");
     static_assert((!std::is_base_of<std::unary_function<C*, float>,
                                    std::reference_wrapper<float(C::*)(int)> >::value), "");
+#endif
 }

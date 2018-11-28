@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                       CALLABLE TEST TYPES
 ///////////////////////////////////////////////////////////////////////////////
-
+#if 0
 bool returns_true() { return true; }
 
 template <class Ret = bool>
@@ -603,3 +603,6 @@ int main()
     call_operator_noexcept_test();
     test_lwg2767();
 }
+#else
+int main() {}
+#endif

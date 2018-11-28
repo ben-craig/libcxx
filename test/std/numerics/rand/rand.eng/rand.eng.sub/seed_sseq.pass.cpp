@@ -16,12 +16,12 @@
 
 #include <random>
 #include <cassert>
+#include "circular_sseq.h"
 
 void
 test1()
 {
-    unsigned a[] = {3, 5, 7};
-    std::seed_seq sseq(a, a+3);
+    circular_sseq sseq{3, 5, 7};
     std::ranlux24_base e1;
     std::ranlux24_base e2(sseq);
     assert(e1 != e2);
@@ -32,8 +32,7 @@ test1()
 void
 test2()
 {
-    unsigned a[] = {3, 5, 7};
-    std::seed_seq sseq(a, a+3);
+    circular_sseq sseq{3, 5, 7};
     std::ranlux48_base e1;
     std::ranlux48_base e2(sseq);
     assert(e1 != e2);

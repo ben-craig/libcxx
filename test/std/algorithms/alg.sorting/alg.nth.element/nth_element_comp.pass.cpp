@@ -21,7 +21,7 @@
 #include <cassert>
 #include <cstddef>
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
-#include <memory>
+#include "MoveOnly.h"
 
 struct indirect_less
 {
@@ -32,19 +32,20 @@ struct indirect_less
 
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 
+int scratch_array[10000];
+
 void
 test_one(int N, int M)
 {
     assert(N != 0);
     assert(M < N);
-    int* array = new int[N];
+    int* array = scratch_array;
     for (int i = 0; i < N; ++i)
         array[i] = i;
     std::random_shuffle(array, array+N);
     std::nth_element(array, array+M, array+N, std::greater<int>());
     assert(array[M] == N-M-1);
     std::nth_element(array, array+N, array+N, std::greater<int>()); // begin, end, end
-    delete [] array;
 }
 
 void
@@ -62,6 +63,8 @@ test(int N)
     test_one(N, N-1);
 }
 
+MoveOnly scratch_move[1000];
+
 int main()
 {
     int d = 0;
@@ -77,11 +80,10 @@ int main()
 
 #ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
     {
-    std::vector<std::unique_ptr<int> > v(1000);
-    for (int i = 0; static_cast<std::size_t>(i) < v.size(); ++i)
-        v[i].reset(new int(i));
-    std::nth_element(v.begin(), v.begin() + v.size()/2, v.end(), indirect_less());
-    assert(static_cast<std::size_t>(*v[v.size()/2]) == v.size()/2);
+    for (int i = 0; static_cast<std::size_t>(i) < std::size(scratch_move); ++i)
+        scratch_move[i].reset(i);
+    std::nth_element(scratch_move, scratch_move + std::size(scratch_move)/2, std::end(scratch_move), indirect_less());
+    assert(static_cast<std::size_t>(*scratch_move[std::size(scratch_move)/2]) == std::size(scratch_move)/2);
     }
 #endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
 }

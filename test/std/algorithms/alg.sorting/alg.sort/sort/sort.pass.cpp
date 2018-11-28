@@ -18,25 +18,31 @@
 #include <algorithm>
 #include <iterator>
 #include <cassert>
+#include <type_traits>
+
+int scratch_helper[100];
 
 template <class RI>
 void
 test_sort_helper(RI f, RI l)
 {
     typedef typename std::iterator_traits<RI>::value_type value_type;
+    static_assert(std::is_same_v<std::iterator_traits<RI>::value_type, int>, "called with non-int");
     typedef typename std::iterator_traits<RI>::difference_type difference_type;
 
     if (f != l)
     {
-        difference_type len = l - f;
-        value_type* save(new value_type[len]);
+        size_t len = size_t(l - f);
+        assert(len <= std::size(scratch_helper));
+        if(len > std::size(scratch_helper))
+            return;
+        value_type* save(scratch_helper);
         do
         {
             std::copy(f, l, save);
             std::sort(save, save+len);
             assert(std::is_sorted(save, save+len));
         } while (std::next_permutation(f, l));
-        delete [] save;
     }
 }
 
@@ -74,13 +80,16 @@ test_sort_()
     }
 }
 
+static const int max_size_test = 2000;
+int input_array[max_size_test];
+
 void
 test_larger_sorts(int N, int M)
 {
     assert(N != 0);
     assert(M != 0);
     // create array length N filled with M different numbers
-    int* array = new int[N];
+    int* array = input_array;
     int x = 0;
     for (int i = 0; i < N; ++i)
     {
@@ -111,7 +120,6 @@ test_larger_sorts(int N, int M)
     std::swap_ranges(array, array+N/2, array+N/2);
     std::sort(array, array+N);
     assert(std::is_sorted(array, array+N));
-    delete [] array;
 }
 
 void
